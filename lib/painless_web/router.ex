@@ -73,6 +73,13 @@ defmodule PainlessWeb.Router do
       on_mount: [{PainlessWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+
+      live "/tenancies", TenancyLive.Index, :index
+      live "/tenancies/new", TenancyLive.Index, :new
+      live "/tenancies/:id/edit", TenancyLive.Index, :edit
+
+      live "/tenancies/:id", TenancyLive.Show, :show
+      live "/tenancies/:id/show/edit", TenancyLive.Show, :edit
     end
   end
 
@@ -80,6 +87,7 @@ defmodule PainlessWeb.Router do
     pipe_through [:browser]
 
     delete "/users/log_out", UserSessionController, :delete
+
     live_session :current_user,
       on_mount: [{PainlessWeb.UserAuth, :mount_current_user}] do
       live "/users/confirm/:token", UserConfirmationLive, :edit

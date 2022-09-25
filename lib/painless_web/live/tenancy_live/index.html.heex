@@ -1,0 +1,43 @@
+<.header>
+  Listing Tenancies
+  <:actions>
+    <.link patch={~p"/tenancies/new"}>
+      <.button>New Tenancy</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="tenancies" rows={@tenancies} row_click={&JS.navigate(~p"/tenancies/#{&1}")}>
+  <:col :let={tenancy} label="Name"><%= tenancy.name %></:col>
+  <:col :let={tenancy} label="Property"><%= tenancy.property %></:col>
+  <:col :let={tenancy} label="Notes"><%= tenancy.notes %></:col>
+  <:col :let={tenancy} label="Rent"><%= tenancy.rent %></:col>
+  <:col :let={tenancy} label="Late fee"><%= tenancy.late_fee %></:col>
+  <:col :let={tenancy} label="Balance"><%= tenancy.balance %></:col>
+  <:col :let={tenancy} label="Active"><%= tenancy.active %></:col>
+  <:col :let={tenancy} label="Rent day of month"><%= tenancy.rent_day_of_month %></:col>
+  <:action :let={tenancy}>
+    <div class="sr-only">
+      <.link navigate={~p"/tenancies/#{tenancy}"}>Show</.link>
+    </div>
+    <.link patch={~p"/tenancies/#{tenancy}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={tenancy}>
+    <.link phx-click={JS.push("delete", value: %{id: tenancy.id})} data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<%= if @live_action in [:new, :edit] do %>
+  <.modal id="tenancy-modal" show on_cancel={JS.navigate(~p"/tenancies")}>
+    <.live_component
+      module={PainlessWeb.TenancyLive.FormComponent}
+      id={@tenancy.id || :new}
+      title={@page_title}
+      action={@live_action}
+      tenancy={@tenancy}
+      navigate={~p"/tenancies"}
+    />
+  </.modal>
+<% end %>
