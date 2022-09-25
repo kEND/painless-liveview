@@ -4,6 +4,13 @@
     <.link patch={~p"/tenancies/new"}>
       <.button>New Tenancy</.button>
     </.link>
+    <.link href="#" phx-click="toggle-active">
+      <%= if @active do %>
+        <.button>Show All</.button>
+      <% else %>
+        <.button>Show Active</.button>
+      <% end %>
+    </.link>
   </:actions>
 </.header>
 

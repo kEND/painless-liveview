@@ -17,8 +17,16 @@ defmodule Painless.Tenancies do
       [%Tenancy{}, ...]
 
   """
-  def list_tenancies do
+  def list_tenancies(show_active \\ false)
+
+  def list_tenancies(show_active) when show_active == false do
     Repo.all(Tenancy)
+  end
+
+  def list_tenancies(show_active) when show_active == true do
+    Tenancy
+    |> where(active: true)
+    |> Repo.all()
   end
 
   @doc """

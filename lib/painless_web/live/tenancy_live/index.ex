@@ -6,7 +6,23 @@ defmodule PainlessWeb.TenancyLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :tenancies, list_tenancies())}
+    socket =
+      socket
+      |> assign(:active, true)
+      |> assign(:tenancies, list_tenancies(true))
+
+    {:ok, socket}
+  end
+
+  def handle_event("toggle-active", _, socket) do
+    show_active = socket.assigns.active
+
+    socket =
+      socket
+      |> assign(:tenancies, list_tenancies(!show_active))
+      |> assign(:active, !show_active)
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -37,10 +53,10 @@ defmodule PainlessWeb.TenancyLive.Index do
     tenancy = Tenancies.get_tenancy!(id)
     {:ok, _} = Tenancies.delete_tenancy(tenancy)
 
-    {:noreply, assign(socket, :tenancies, list_tenancies())}
+    {:noreply, assign(socket, :tenancies, list_tenancies(socket.assigns.active))}
   end
 
-  defp list_tenancies do
-    Tenancies.list_tenancies()
+  defp list_tenancies(active) do
+    Tenancies.list_tenancies(active)
   end
 end
