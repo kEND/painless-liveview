@@ -12,21 +12,16 @@ defmodule PainlessWeb.TenancyLive.FormComponent do
         <:subtitle>Use this form to manage tenancy records in your database.</:subtitle>
       </.header>
 
-      <.simple_form
-        :let={f}
-        for={@changeset}
-        id="tenancy-form"
-        phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
-      >
+      <.simple_form :let={f} for={@changeset} id="tenancy-form" phx-target={@myself} phx-change="validate" phx-submit="save">
         <.input field={{f, :name}} type="text" label="name" />
         <.input field={{f, :property}} type="text" label="property" />
         <.input field={{f, :notes}} type="text" label="notes" />
-        <.input field={{f, :rent}} type="number" label="rent" />
-        <.input field={{f, :late_fee}} type="number" label="late_fee" />
-        <.input field={{f, :balance}} type="number" label="balance" />
-        <.input field={{f, :active}} type="checkbox" label="active" />
+        <.input field={{f, :rent}} type="text" label="rent" />
+        <.input field={{f, :late_fee}} type="text" label="late_fee" />
+        <.input field={{f, :balance}} type="text" label="balance" />
+        <label phx-feedback-for="tenancy[:active]" class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+          <%= checkbox(f, :active) %> Is active?
+        </label>
         <.input field={{f, :rent_day_of_month}} type="number" label="rent_day_of_month" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Tenancy</.button>
