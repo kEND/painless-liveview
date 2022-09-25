@@ -17,7 +17,6 @@
 <.table id="tenancies" rows={@tenancies} row_click={&JS.navigate(~p"/tenancies/#{&1}")}>
   <:col :let={tenancy} label="Name"><%= tenancy.name %></:col>
   <:col :let={tenancy} label="Property"><%= tenancy.property %></:col>
-  <:col :let={tenancy} label="Notes"><%= tenancy.notes %></:col>
   <:col :let={tenancy} label="Rent"><%= tenancy.rent %></:col>
   <:col :let={tenancy} label="Late fee"><%= tenancy.late_fee %></:col>
   <:col :let={tenancy} label="Balance"><%= tenancy.balance %></:col>

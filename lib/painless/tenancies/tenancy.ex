@@ -4,12 +4,12 @@ defmodule Painless.Tenancies.Tenancy do
 
   schema "tenancies" do
     field :active, :boolean, default: false
-    field :balance, :integer
-    field :late_fee, :integer
+    field :balance, Money.Ecto.Amount.Type
+    field :late_fee, Money.Ecto.Amount.Type
     field :name, :string
     field :notes, :string
     field :property, :string
-    field :rent, :integer
+    field :rent, Money.Ecto.Amount.Type
     field :rent_day_of_month, :integer
 
     timestamps()
