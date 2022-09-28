@@ -13,6 +13,8 @@ defmodule Painless.Tenancies.Tenancy do
     field :rent_day_of_month, :integer
 
     timestamps()
+
+    has_many :ledgers, Painless.Ledgers.Ledger
   end
 
   @doc false

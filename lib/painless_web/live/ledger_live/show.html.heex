@@ -1,0 +1,30 @@
+<.header>
+  Ledger <%= @ledger.id %>
+  <:subtitle>This is a ledger record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/tenancies/#{@tenancy}/ledgers/#{@ledger}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit ledger</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @ledger.name %></:item>
+  <:item title="Acct type"><%= @ledger.acct_type %></:item>
+  <:item title="Balance"><%= @ledger.balance %></:item>
+</.list>
+
+<.back navigate={~p"/tenancies/#{@tenancy}/ledgers"}>Back to ledgers</.back>
+
+<%= if @live_action in [:edit] do %>
+  <.modal id="ledger-modal" show on_cancel={JS.patch(~p"/tenancies/#{@tenancy}/ledgers/#{@ledger}")}>
+    <.live_component
+      module={PainlessWeb.LedgerLive.FormComponent}
+      id={@ledger.id}
+      title={@page_title}
+      action={@live_action}
+      ledger={@ledger}
+      navigate={~p"/tenancies/#{@tenancy}/ledgers/#{@ledger}"}
+    />
+  </.modal>
+<% end %>

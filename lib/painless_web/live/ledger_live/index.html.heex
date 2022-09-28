@@ -1,0 +1,38 @@
+<.header>
+  Listing Ledgers
+  <:actions>
+    <.link patch={~p"/tenancies/#{@tenancy}/ledgers/new"}>
+      <.button>New Ledger</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="ledgers" rows={@ledgers} row_click={&JS.navigate(~p"/tenancies/#{@tenancy}/ledgers/#{&1}")}>
+  <:col :let={ledger} label="Name"><%= ledger.name %></:col>
+  <:col :let={ledger} label="Acct type"><%= ledger.acct_type %></:col>
+  <:col :let={ledger} label="Balance"><%= ledger.balance %></:col>
+  <:action :let={ledger}>
+    <div class="sr-only">
+      <.link navigate={~p"/tenancies/#{@tenancy}/ledgers/#{ledger}"}>Show</.link>
+    </div>
+    <.link patch={~p"/tenancies/#{@tenancy}/ledgers/#{ledger}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={ledger}>
+    <.link phx-click={JS.push("delete", value: %{id: ledger.id})} data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<%= if @live_action in [:new, :edit] do %>
+  <.modal id="ledger-modal" show on_cancel={JS.navigate(~p"/tenancies/#{@tenancy}/ledgers")}>
+    <.live_component
+      module={PainlessWeb.LedgerLive.FormComponent}
+      id={@ledger.id || :new}
+      title={@page_title}
+      action={@live_action}
+      ledger={@ledger}
+      navigate={~p"/tenancies/#{@tenancy}/ledgers"}
+    />
+  </.modal>
+<% end %>
