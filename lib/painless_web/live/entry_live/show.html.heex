@@ -1,0 +1,37 @@
+<.header>
+  Entry <%= @entry.id %>
+  <:subtitle>This is a entry record from your database.</:subtitle>
+  <:actions>
+    <.link
+      patch={~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries/#{@entry}/show/edit"}
+      phx-click={JS.push_focus()}
+    >
+      <.button>Edit entry</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Description"><%= @entry.description %></:item>
+  <:item title="Amount"><%= @entry.amount %></:item>
+  <:item title="Transaction date"><%= @entry.transaction_date %></:item>
+</.list>
+
+<.back navigate={~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries"}>Back to entries</.back>
+
+<%= if @live_action in [:edit] do %>
+  <.modal
+    id="entry-modal"
+    show
+    on_cancel={JS.patch(~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries/#{@entry}")}
+  >
+    <.live_component
+      module={PainlessWeb.EntryLive.FormComponent}
+      id={@entry.id}
+      title={@page_title}
+      action={@live_action}
+      entry={@entry}
+      navigate={~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries/#{@entry}"}
+    />
+  </.modal>
+<% end %>

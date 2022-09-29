@@ -6,8 +6,6 @@ defmodule PainlessWeb.LedgerLive.Show do
 
   @impl true
   def mount(params, _session, socket) do
-    IO.inspect(params)
-    IO.inspect(socket.assigns)
     {:ok, socket}
   end
 

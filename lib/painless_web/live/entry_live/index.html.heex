@@ -1,0 +1,42 @@
+<.header>
+  Listing Entries
+  <:actions>
+    <.link patch={~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries/new"}>
+      <.button>New Entry</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="entries"
+  rows={@entries}
+  row_click={&JS.navigate(~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries/#{&1}")}
+>
+  <:col :let={entry} label="Description"><%= entry.description %></:col>
+  <:col :let={entry} label="Amount"><%= entry.amount %></:col>
+  <:col :let={entry} label="Transaction date"><%= entry.transaction_date %></:col>
+  <:action :let={entry}>
+    <div class="sr-only">
+      <.link navigate={~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries/#{entry}"}>Show</.link>
+    </div>
+    <.link patch={~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries/#{entry}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={entry}>
+    <.link phx-click={JS.push("delete", value: %{id: entry.id})} data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<%= if @live_action in [:new, :edit] do %>
+  <.modal id="entry-modal" show on_cancel={JS.navigate(~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries")}>
+    <.live_component
+      module={PainlessWeb.EntryLive.FormComponent}
+      id={@entry.id || :new}
+      title={@page_title}
+      action={@live_action}
+      entry={@entry}
+      navigate={~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries"}
+    />
+  </.modal>
+<% end %>

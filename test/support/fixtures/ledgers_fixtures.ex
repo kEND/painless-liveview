@@ -19,4 +19,20 @@ defmodule Painless.LedgersFixtures do
 
     ledger
   end
+
+  @doc """
+  Generate a entry.
+  """
+  def entry_fixture(attrs \\ %{}) do
+    {:ok, entry} =
+      attrs
+      |> Enum.into(%{
+        amount: 42,
+        description: "some description",
+        transaction_date: ~N[2022-09-28 03:04:00]
+      })
+      |> Painless.Ledgers.create_entry()
+
+    entry
+  end
 end

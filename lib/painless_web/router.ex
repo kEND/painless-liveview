@@ -89,6 +89,15 @@ defmodule PainlessWeb.Router do
 
           live "/:id", LedgerLive.Show, :show
           live "/:id/show/edit", LedgerLive.Show, :edit
+
+          scope ":ledger_id/entries" do
+            live "/", EntryLive.Index, :index
+            live "/new", EntryLive.Index, :new
+            live "/:id/edit", EntryLive.Index, :edit
+
+            live "/:id", EntryLive.Show, :show
+            live "/:id/show/edit", EntryLive.Show, :edit
+          end
         end
       end
     end
