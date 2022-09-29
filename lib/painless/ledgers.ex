@@ -135,7 +135,7 @@ defmodule Painless.Ledgers do
       ** (Ecto.NoResultsError)
 
   """
-  def get_entry!(id), do: Repo.get!(Entry, id)
+  def get_entry!(id), do: Entry |> Repo.get!(id) |> Repo.preload(:ledger)
 
   @doc """
   Creates a entry.

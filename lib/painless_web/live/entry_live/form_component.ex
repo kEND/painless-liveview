@@ -8,7 +8,7 @@ defmodule PainlessWeb.EntryLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        <%= @title <> " for " <> @entry.ledger.acct_type %>
         <:subtitle>Use this form to manage entry records in your database.</:subtitle>
       </.header>
 
@@ -18,7 +18,7 @@ defmodule PainlessWeb.EntryLive.FormComponent do
         <.input field={{f, :transaction_date}} type="date" label="transaction_date" />
         <%= hidden_input(f, :ledger_id) %>
         <:actions>
-          <.button phx-disable-with="Saving...">Save Entry</.button>
+          <.button phx-disable-with="Saving...">Save <%= @entry.ledger.acct_type %> Entry</.button>
         </:actions>
       </.simple_form>
     </div>
@@ -27,6 +27,8 @@ defmodule PainlessWeb.EntryLive.FormComponent do
 
   @impl true
   def update(%{entry: entry} = assigns, socket) do
+    IO.inspect(assigns)
+
     changeset = Ledgers.change_entry(entry)
 
     {:ok,

@@ -26,7 +26,7 @@ defmodule PainlessWeb.EntryLive.Index do
   defp apply_action(socket, :new, %{"ledger_id" => ledger_id}) do
     socket
     |> assign(:page_title, "New Entry")
-    |> assign(:entry, %Entry{ledger_id: ledger_id})
+    |> assign(:entry, %Entry{ledger_id: ledger_id, ledger: socket.assigns.ledger})
   end
 
   defp apply_action(socket, :index, _params) do

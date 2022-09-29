@@ -1,12 +1,12 @@
 <.header>
-  Entry <%= @entry.id %>
+  <%= @ledger.acct_type %> Entry <%= @entry.id %>
   <:subtitle>This is a entry record from your database.</:subtitle>
   <:actions>
     <.link
       patch={~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries/#{@entry}/show/edit"}
       phx-click={JS.push_focus()}
     >
-      <.button>Edit entry</.button>
+      <.button>Edit <%= @ledger.acct_type %> entry</.button>
     </.link>
   </:actions>
 </.header>
@@ -17,7 +17,9 @@
   <:item title="Transaction date"><%= @entry.transaction_date %></:item>
 </.list>
 
-<.back navigate={~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries"}>Back to entries</.back>
+<.back navigate={~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries"}>
+  Back to <%= @ledger.acct_type %> entries
+</.back>
 
 <%= if @live_action in [:edit] do %>
   <.modal

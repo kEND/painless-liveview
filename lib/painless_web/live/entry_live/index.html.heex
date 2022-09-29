@@ -1,8 +1,8 @@
 <.header>
-  Listing Entries
+  Listing <%= @ledger.acct_type %> Entries
   <:actions>
     <.link patch={~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries/new"}>
-      <.button>New Entry</.button>
+      <.button>New <%= @ledger.acct_type %> Entry</.button>
     </.link>
   </:actions>
 </.header>
