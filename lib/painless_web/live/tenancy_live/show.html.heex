@@ -2,6 +2,9 @@
   Tenancy <%= @tenancy.id %>
   <:subtitle>This is a tenancy record from your database.</:subtitle>
   <:actions>
+    <.link :for={ledger <- @tenancy.ledgers} patch={~p"/tenancies/#{@tenancy}/ledgers/#{ledger}/entries/new"}>
+      <.button>New <%= ledger.acct_type %> Entry</.button>
+    </.link>
     <.link patch={~p"/tenancies/#{@tenancy}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit tenancy</.button>
     </.link>
@@ -33,4 +36,3 @@
     />
   </.modal>
 <% end %>
-

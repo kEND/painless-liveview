@@ -43,7 +43,7 @@ defmodule Painless.Tenancies do
       ** (Ecto.NoResultsError)
 
   """
-  def get_tenancy!(id), do: Repo.get!(Tenancy, id)
+  def get_tenancy!(id), do: Tenancy |> Repo.get!(id) |> Repo.preload(:ledgers)
 
   @doc """
   Creates a tenancy.
