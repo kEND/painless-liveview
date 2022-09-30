@@ -6,6 +6,8 @@ defmodule Painless.Tenancies do
   import Ecto.Query, warn: false
   alias Painless.Repo
 
+  alias Painless.Ledgers.Entry
+  alias Painless.Ledgers.Ledger
   alias Painless.Tenancies.Tenancy
 
   @doc """
@@ -26,6 +28,24 @@ defmodule Painless.Tenancies do
   def list_tenancies(show_active) when show_active == true do
     Tenancy
     |> where(active: true)
+    |> Repo.all()
+  end
+
+  @doc """
+  Return the latest 20 entries interwoven by date
+  """
+  def list_combined_entries(tenancy_id) do
+    from(e in Entry)
+    |> select_merge([e, l], %{
+      charge: type(fragment("CASE ? WHEN 'Receivable' THEN ? ELSE 0 END", l.acct_type, e.amount), Money.Ecto.Type)
+    })
+    |> select_merge([e, l], %{
+      payment: type(fragment("CASE ? WHEN 'Income' THEN ? ELSE 0 END", l.acct_type, e.amount), Money.Ecto.Type)
+    })
+    |> join(:inner, [e], l in Ledger, on: e.ledger_id == l.id)
+    |> where([_, l], l.tenancy_id == ^tenancy_id)
+    |> order_by([e], desc: e.transaction_date)
+    |> limit([e, l], 20)
     |> Repo.all()
   end
 
