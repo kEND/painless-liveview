@@ -8,7 +8,7 @@ defmodule PainlessWeb.EntryLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title <> " for " <> @entry.ledger.acct_type %>
+        <%= @title <> " for " <> @entry.ledger.acct_type <> " for " <> @entry.ledger.tenancy.name %>
         <:subtitle>Use this form to manage entry records in your database.</:subtitle>
       </.header>
 

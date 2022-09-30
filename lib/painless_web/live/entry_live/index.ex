@@ -3,12 +3,19 @@ defmodule PainlessWeb.EntryLive.Index do
 
   alias Painless.Ledgers
   alias Painless.Ledgers.Entry
+  alias Painless.Ledgers.Ledger
+  alias Painless.Tenancies
+  alias Painless.Tenancies.Tenancy
 
   @impl true
   def mount(%{"ledger_id" => ledger_id}, _session, socket) do
+    ledger = Ledgers.get_ledger!(ledger_id)
+    tenancy = Tenancies.get_tenancy!(ledger.tenancy_id)
+
     {:ok,
      socket
-     |> assign(:ledger, Ledgers.get_ledger!(ledger_id))
+     |> assign(:ledger, ledger)
+     |> assign(:tenancy, tenancy)
      |> assign(:entries, list_entries(ledger_id))}
   end
 
@@ -26,7 +33,10 @@ defmodule PainlessWeb.EntryLive.Index do
   defp apply_action(socket, :new, %{"ledger_id" => ledger_id}) do
     socket
     |> assign(:page_title, "New Entry")
-    |> assign(:entry, %Entry{ledger_id: ledger_id, ledger: socket.assigns.ledger})
+    |> assign(:entry, %Entry{
+      ledger_id: ledger_id,
+      ledger: %Ledger{acct_type: socket.assigns.ledger.acct_type, tenancy: socket.assigns.tenancy}
+    })
   end
 
   defp apply_action(socket, :index, _params) do
