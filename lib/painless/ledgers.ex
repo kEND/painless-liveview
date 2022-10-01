@@ -7,6 +7,7 @@ defmodule Painless.Ledgers do
   alias Painless.Repo
 
   alias Painless.Ledgers.Ledger
+  alias Painless.Tenancies
 
   @doc """
   Returns the list of ledgers.
@@ -200,5 +201,52 @@ defmodule Painless.Ledgers do
   """
   def change_entry(%Entry{} = entry, attrs \\ %{}) do
     Entry.changeset(entry, attrs)
+  end
+
+  @doc """
+  Find or create expected rent records by rent day of month
+  for active tenancies
+  """
+  def find_or_create_expected_rent() do
+    active_tenancies = Tenancies.list_tenancies(true) |> Repo.preload(:ledgers)
+
+    Enum.map(this_and_prior_four_months(), fn date ->
+      month_name = Calendar.strftime(date, "%B")
+
+      active_tenancies
+      |> Enum.map(fn %{ledgers: ledgers, rent_day_of_month: rent_day_of_month} = tenancy ->
+        ledger = Enum.find(ledgers, &(&1.acct_type == "Receivable"))
+        {year, month, _day} = Date.to_erl(date)
+
+        %{
+          ledger_id: ledger.id,
+          amount: tenancy.rent,
+          description: "Rent Due " <> month_name,
+          transaction_date: Date.from_erl!({year, month, rent_day_of_month})
+        }
+      end)
+    end)
+    |> List.flatten()
+    |> Enum.filter(fn %{ledger_id: ledger_id, description: description, transaction_date: date} ->
+      is_nil(entry_by_ledger_id_description_and_date(ledger_id, description, date))
+    end)
+    |> Enum.each(&create_entry(&1))
+  end
+
+  def this_and_prior_four_months do
+    Enum.reduce(1..4, [Date.utc_today() |> Date.beginning_of_month()], fn _nth_time, list_of_months ->
+      first_of_last_month =
+        hd(list_of_months)
+        |> Date.add(-1)
+        |> Date.beginning_of_month()
+
+      [first_of_last_month | list_of_months]
+    end)
+  end
+
+  def entry_by_ledger_id_description_and_date(ledger_id, description, date) do
+    Entry
+    |> where(ledger_id: ^ledger_id, description: ^description, transaction_date: ^date)
+    |> Repo.one()
   end
 end
