@@ -32,3 +32,6 @@ painless-*.tar
 npm-debug.log
 /assets/node_modules/
 
+*.sh
+/priv/dumps/
+
