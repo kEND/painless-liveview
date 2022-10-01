@@ -34,7 +34,7 @@ defmodule Painless.Tenancies do
   @doc """
   Return the latest 20 entries interwoven by date
   """
-  def list_combined_entries(tenancy_id) do
+  def list_combined_entries(tenancy_id, limit \\ nil) do
     from(e in Entry)
     |> select_merge([e, l], %{
       charge: type(fragment("CASE ? WHEN 'Receivable' THEN ? ELSE 0 END", l.acct_type, e.amount), Money.Ecto.Type)
@@ -45,7 +45,7 @@ defmodule Painless.Tenancies do
     |> join(:inner, [e], l in Ledger, on: e.ledger_id == l.id)
     |> where([_, l], l.tenancy_id == ^tenancy_id)
     |> order_by([e], desc: e.transaction_date)
-    |> limit([e, l], 20)
+    |> limit([e, l], ^limit)
     |> Repo.all()
   end
 

@@ -34,7 +34,7 @@ defmodule PainlessWeb.TenancyLive.CombinedEntries do
 
   @impl true
   def update(%{tenancy: tenancy} = assigns, socket) do
-    entries = Tenancies.list_combined_entries(tenancy.id)
+    entries = Tenancies.list_combined_entries(tenancy.id, 20)
 
     {:ok,
      socket

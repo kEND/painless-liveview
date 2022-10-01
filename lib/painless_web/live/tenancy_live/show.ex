@@ -22,7 +22,7 @@ defmodule PainlessWeb.TenancyLive.Show do
     entry = Ledgers.get_entry!(id)
     {:ok, _} = Ledgers.delete_entry(entry)
 
-    {:noreply, assign(socket, :entries, Tenancies.list_combined_entries(socket.assigns.tenancy.id))}
+    {:noreply, assign(socket, :entries, Tenancies.list_combined_entries(socket.assigns.tenancy.id, 20))}
   end
 
   defp page_title(:show), do: "Show Tenancy"
