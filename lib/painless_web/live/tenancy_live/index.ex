@@ -58,5 +58,6 @@ defmodule PainlessWeb.TenancyLive.Index do
 
   defp list_tenancies(active) do
     Tenancies.list_tenancies(active)
+    |> Enum.map(&Tenancies.apply_entries_balance/1)
   end
 end

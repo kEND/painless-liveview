@@ -50,6 +50,29 @@ defmodule Painless.Tenancies do
   end
 
   @doc """
+  Returns the Tenancy with balance updated to that of the underlying ledger entries
+  """
+  def apply_entries_balance(%Tenancy{} = tenancy) do
+    Map.put(tenancy, :balance, calculated_balance(tenancy.id))
+  end
+
+  defp calculated_balance(tenancy_id) do
+    Money.subtract(
+      sum_entries_by_acct_type(tenancy_id, "Income"),
+      sum_entries_by_acct_type(tenancy_id, "Receivable")
+    )
+  end
+
+  defp sum_entries_by_acct_type(tenancy_id, acct_type) do
+    Entry
+    |> join(:inner, [e], l in Ledger, on: e.ledger_id == l.id)
+    |> where([_, l], l.tenancy_id == ^tenancy_id)
+    |> where([_, l], l.acct_type == ^acct_type)
+    |> select([e, _], sum(e.amount))
+    |> Repo.one()
+  end
+
+  @doc """
   Gets a single tenancy.
 
   Raises `Ecto.NoResultsError` if the Tenancy does not exist.
