@@ -119,6 +119,7 @@ defmodule Painless.Ledgers do
   def list_entries(ledger_id) do
     Entry
     |> where([e], e.ledger_id == ^ledger_id)
+    |> order_by([e], desc: e.transaction_date)
     |> Repo.all()
   end
 
