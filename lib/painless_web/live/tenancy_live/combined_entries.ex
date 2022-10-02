@@ -13,8 +13,8 @@ defmodule PainlessWeb.TenancyLive.CombinedEntries do
         row_click={&JS.navigate(~p"/tenancies/#{@tenancy}/ledgers/#{&1.ledger_id}/entries/#{&1}")}
       >
         <:col :let={entry} label="Description"><%= entry.description %></:col>
-        <:col :let={entry} label="Charge"><%= entry.charge %></:col>
         <:col :let={entry} label="Payment"><%= entry.payment %></:col>
+        <:col :let={entry} label="Charge"><%= entry.charge %></:col>
         <:col :let={entry} label="Transaction date"><%= entry.transaction_date %></:col>
         <:action :let={entry}>
           <div class="sr-only">

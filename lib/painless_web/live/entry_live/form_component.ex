@@ -27,8 +27,6 @@ defmodule PainlessWeb.EntryLive.FormComponent do
 
   @impl true
   def update(%{entry: entry} = assigns, socket) do
-    IO.inspect(assigns)
-
     changeset = Ledgers.change_entry(entry)
 
     {:ok,
