@@ -6,6 +6,7 @@ defmodule Painless.Tenancies do
   import Ecto.Query, warn: false
   alias Painless.Repo
 
+  alias Painless.Ledgers
   alias Painless.Ledgers.Entry
   alias Painless.Ledgers.Ledger
   alias Painless.Tenancies.Tenancy
@@ -29,6 +30,7 @@ defmodule Painless.Tenancies do
     Tenancy
     |> where(active: true)
     |> Repo.all()
+    |> tap(&Ledgers.maybe_add_expected_rents(&1))
   end
 
   @doc """

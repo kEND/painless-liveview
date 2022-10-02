@@ -7,7 +7,6 @@ defmodule Painless.Ledgers do
   alias Painless.Repo
 
   alias Painless.Ledgers.Ledger
-  alias Painless.Tenancies
 
   @doc """
   Returns the list of ledgers.
@@ -204,14 +203,34 @@ defmodule Painless.Ledgers do
     Entry.changeset(entry, attrs)
   end
 
-  @doc """
-  Find or create expected rent records by rent day of month
-  for active tenancies
-  """
-  def find_or_create_expected_rent() do
-    active_tenancies = Tenancies.list_tenancies(true) |> Repo.preload(:ledgers)
+  def maybe_add_expected_rents(active_tenancies) do
+    active_tenancies = Repo.preload(active_tenancies, :ledgers)
 
-    Enum.map(this_and_prior_four_months(), fn date ->
+    ledger_ids =
+      active_tenancies
+      |> Enum.map(fn %{ledgers: ledgers} ->
+        ledger = Enum.find(ledgers, &(&1.acct_type == "Receivable"))
+        ledger.id
+      end)
+
+    most_recent_expected_rent_beginning_of_month =
+      Entry
+      |> where([e], e.ledger_id in ^ledger_ids)
+      |> select([e], max(e.transaction_date))
+      |> Repo.one()
+      |> Date.beginning_of_month()
+
+    current_beginning_of_month =
+      Date.utc_today()
+      |> Date.beginning_of_month()
+
+    if Date.diff(current_beginning_of_month, most_recent_expected_rent_beginning_of_month) > 0 do
+      find_or_create_expected_rent(active_tenancies)
+    end
+  end
+
+  defp find_or_create_expected_rent(active_tenancies) do
+    Enum.map(this_and_prior_three_months(), fn date ->
       month_name = Calendar.strftime(date, "%B")
 
       active_tenancies
@@ -234,8 +253,8 @@ defmodule Painless.Ledgers do
     |> Enum.each(&create_entry(&1))
   end
 
-  def this_and_prior_four_months do
-    Enum.reduce(1..4, [Date.utc_today() |> Date.beginning_of_month()], fn _nth_time, list_of_months ->
+  defp this_and_prior_three_months do
+    Enum.reduce(1..3, [Date.utc_today() |> Date.beginning_of_month()], fn _nth_time, list_of_months ->
       first_of_last_month =
         hd(list_of_months)
         |> Date.add(-1)
@@ -245,7 +264,7 @@ defmodule Painless.Ledgers do
     end)
   end
 
-  def entry_by_ledger_id_description_and_date(ledger_id, description, date) do
+  defp entry_by_ledger_id_description_and_date(ledger_id, description, date) do
     Entry
     |> where(ledger_id: ^ledger_id, description: ^description, transaction_date: ^date)
     |> Repo.one()
