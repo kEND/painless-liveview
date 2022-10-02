@@ -5,7 +5,6 @@ defmodule PainlessWeb.EntryLive.Index do
   alias Painless.Ledgers.Entry
   alias Painless.Ledgers.Ledger
   alias Painless.Tenancies
-  alias Painless.Tenancies.Tenancy
 
   @impl true
   def mount(%{"ledger_id" => ledger_id}, _session, socket) do
