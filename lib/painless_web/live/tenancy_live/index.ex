@@ -26,6 +26,14 @@ defmodule PainlessWeb.TenancyLive.Index do
   end
 
   @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    tenancy = Tenancies.get_tenancy!(id)
+    {:ok, _} = Tenancies.delete_tenancy(tenancy)
+
+    {:noreply, assign(socket, :tenancies, list_tenancies(socket.assigns.active))}
+  end
+
+  @impl true
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
@@ -46,14 +54,6 @@ defmodule PainlessWeb.TenancyLive.Index do
     socket
     |> assign(:page_title, "Listing Tenancies")
     |> assign(:tenancy, nil)
-  end
-
-  @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    tenancy = Tenancies.get_tenancy!(id)
-    {:ok, _} = Tenancies.delete_tenancy(tenancy)
-
-    {:noreply, assign(socket, :tenancies, list_tenancies(socket.assigns.active))}
   end
 
   defp list_tenancies(active) do
