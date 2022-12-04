@@ -71,7 +71,7 @@ defmodule Painless.Tenancies do
     |> where([_, l], l.tenancy_id == ^tenancy_id)
     |> where([_, l], l.acct_type == ^acct_type)
     |> select([e, _], sum(e.amount))
-    |> Repo.one()
+    |> Repo.one() || Money.new(0)
   end
 
   @doc """
