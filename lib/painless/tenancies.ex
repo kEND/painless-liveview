@@ -102,6 +102,7 @@ defmodule Painless.Tenancies do
       iex> create_tenancy(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
+  TODO: make into a multi that creates Income and Receivable Ledger records
   """
   def create_tenancy(attrs \\ %{}) do
     %Tenancy{}
@@ -138,6 +139,7 @@ defmodule Painless.Tenancies do
       iex> delete_tenancy(tenancy)
       {:error, %Ecto.Changeset{}}
 
+  TODO don't delete unless there are no entries in the ledger accounts
   """
   def delete_tenancy(%Tenancy{} = tenancy) do
     Repo.delete(tenancy)
