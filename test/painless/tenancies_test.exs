@@ -41,7 +41,7 @@ defmodule Painless.TenanciesTest do
         rent_day_of_month: 2
       }
 
-      assert {:ok, %Tenancy{} = tenancy} = Tenancies.create_tenancy(valid_attrs)
+      assert {:ok, %{insert_tenancy: %Tenancy{} = tenancy}} = Tenancies.create_tenancy(valid_attrs)
       assert tenancy.active == true
       assert tenancy.balance == Money.new(42)
       assert tenancy.late_fee == Money.new(42)
@@ -53,7 +53,23 @@ defmodule Painless.TenanciesTest do
     end
 
     test "create_tenancy/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Tenancies.create_tenancy(@invalid_attrs)
+      assert {:error, :insert_tenancy,
+              %Ecto.Changeset{
+                action: :insert,
+                changes: %{},
+                errors: [
+                  name: {"can't be blank", [validation: :required]},
+                  property: {"can't be blank", [validation: :required]},
+                  notes: {"can't be blank", [validation: :required]},
+                  rent: {"can't be blank", [validation: :required]},
+                  late_fee: {"can't be blank", [validation: :required]},
+                  balance: {"can't be blank", [validation: :required]},
+                  active: {"can't be blank", [validation: :required]},
+                  rent_day_of_month: {"can't be blank", [validation: :required]}
+                ],
+                data: %Painless.Tenancies.Tenancy{},
+                valid?: false
+              }, %{}} = Tenancies.create_tenancy(@invalid_attrs)
     end
 
     test "update_tenancy/2 with valid data updates the tenancy" do

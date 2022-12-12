@@ -4,6 +4,8 @@ defmodule Painless.Tenancies do
   """
 
   import Ecto.Query, warn: false
+
+  alias Ecto.Multi
   alias Painless.Repo
 
   alias Painless.Ledgers
@@ -31,6 +33,7 @@ defmodule Painless.Tenancies do
     |> where(active: true)
     |> preload([:ledgers])
     |> Repo.all()
+    |> Repo.preload(:ledgers)
     |> tap(&Ledgers.maybe_add_expected_rents(&1))
   end
 
@@ -105,9 +108,11 @@ defmodule Painless.Tenancies do
   TODO: make into a multi that creates Income and Receivable Ledger records
   """
   def create_tenancy(attrs \\ %{}) do
-    %Tenancy{}
-    |> Tenancy.changeset(attrs)
-    |> Repo.insert()
+    tenancy = Tenancy.changeset(%Tenancy{}, attrs)
+
+    Multi.new()
+    |> Multi.insert(:insert_tenancy, tenancy)
+    |> Repo.transaction()
   end
 
   @doc """
