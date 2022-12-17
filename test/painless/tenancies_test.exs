@@ -8,7 +8,16 @@ defmodule Painless.TenanciesTest do
 
     import Painless.TenanciesFixtures
 
-    @invalid_attrs %{active: nil, balance: nil, late_fee: nil, name: nil, notes: nil, property: nil, rent: nil, rent_day_of_month: nil}
+    @invalid_attrs %{
+      active: nil,
+      balance: nil,
+      late_fee: nil,
+      name: nil,
+      notes: nil,
+      property: nil,
+      rent: nil,
+      rent_day_of_month: nil
+    }
 
     test "list_tenancies/0 returns all tenancies" do
       tenancy = tenancy_fixture()
@@ -21,17 +30,26 @@ defmodule Painless.TenanciesTest do
     end
 
     test "create_tenancy/1 with valid data creates a tenancy" do
-      valid_attrs = %{active: true, balance: 42, late_fee: 42, name: "some name", notes: "some notes", property: "some property", rent: 42, rent_day_of_month: 42}
+      valid_attrs = %{
+        active: true,
+        balance: 42,
+        late_fee: 42,
+        name: "some name",
+        notes: "some notes",
+        property: "some property",
+        rent: 42,
+        rent_day_of_month: 2
+      }
 
       assert {:ok, %Tenancy{} = tenancy} = Tenancies.create_tenancy(valid_attrs)
       assert tenancy.active == true
-      assert tenancy.balance == 42
-      assert tenancy.late_fee == 42
+      assert tenancy.balance == Money.new(42)
+      assert tenancy.late_fee == Money.new(42)
       assert tenancy.name == "some name"
       assert tenancy.notes == "some notes"
       assert tenancy.property == "some property"
-      assert tenancy.rent == 42
-      assert tenancy.rent_day_of_month == 42
+      assert tenancy.rent == Money.new(42)
+      assert tenancy.rent_day_of_month == 2
     end
 
     test "create_tenancy/1 with invalid data returns error changeset" do
@@ -40,17 +58,27 @@ defmodule Painless.TenanciesTest do
 
     test "update_tenancy/2 with valid data updates the tenancy" do
       tenancy = tenancy_fixture()
-      update_attrs = %{active: false, balance: 43, late_fee: 43, name: "some updated name", notes: "some updated notes", property: "some updated property", rent: 43, rent_day_of_month: 43}
+
+      update_attrs = %{
+        active: false,
+        balance: 43,
+        late_fee: 43,
+        name: "some updated name",
+        notes: "some updated notes",
+        property: "some updated property",
+        rent: 43,
+        rent_day_of_month: 3
+      }
 
       assert {:ok, %Tenancy{} = tenancy} = Tenancies.update_tenancy(tenancy, update_attrs)
       assert tenancy.active == false
-      assert tenancy.balance == 43
-      assert tenancy.late_fee == 43
+      assert tenancy.balance == Money.new(43)
+      assert tenancy.late_fee == Money.new(43)
       assert tenancy.name == "some updated name"
       assert tenancy.notes == "some updated notes"
       assert tenancy.property == "some updated property"
-      assert tenancy.rent == 43
-      assert tenancy.rent_day_of_month == 43
+      assert tenancy.rent == Money.new(43)
+      assert tenancy.rent_day_of_month == 3
     end
 
     test "update_tenancy/2 with invalid data returns error changeset" do

@@ -7,6 +7,8 @@ defmodule Painless.TenanciesFixtures do
   @doc """
   Generate a tenancy.
   """
+  alias Painless.Repo
+
   def tenancy_fixture(attrs \\ %{}) do
     {:ok, tenancy} =
       attrs
@@ -22,6 +24,6 @@ defmodule Painless.TenanciesFixtures do
       })
       |> Painless.Tenancies.create_tenancy()
 
-    tenancy
+    tenancy |> Repo.preload(:ledgers)
   end
 end

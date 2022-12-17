@@ -23,12 +23,13 @@ defmodule Painless.Tenancies do
   def list_tenancies(show_active \\ false)
 
   def list_tenancies(show_active) when show_active == false do
-    Repo.all(Tenancy)
+    Repo.all(Tenancy |> preload([:ledgers]))
   end
 
   def list_tenancies(show_active) when show_active == true do
     Tenancy
     |> where(active: true)
+    |> preload([:ledgers])
     |> Repo.all()
     |> tap(&Ledgers.maybe_add_expected_rents(&1))
   end
