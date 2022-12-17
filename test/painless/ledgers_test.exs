@@ -13,8 +13,9 @@ defmodule Painless.LedgersTest do
 
     test "list_ledgers/1 returns all ledgers for a tenancy" do
       tenancy = tenancy_fixture()
-      ledger = ledger_fixture(tenancy_id: tenancy.id)
-      assert Ledgers.list_ledgers(tenancy.id) == [ledger]
+
+      assert [%Ledger{name: "Rent", acct_type: "Income"}, %Ledger{name: "Expected Rent", acct_type: "Receivable"}] =
+               Ledgers.list_ledgers(tenancy.id)
     end
 
     test "get_ledger!/1 returns the ledger with given id" do

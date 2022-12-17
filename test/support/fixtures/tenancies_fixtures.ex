@@ -10,7 +10,7 @@ defmodule Painless.TenanciesFixtures do
   alias Painless.Repo
 
   def tenancy_fixture(attrs \\ %{}) do
-    {:ok, tenancy} =
+    {:ok, %{insert_tenancy: %Painless.Tenancies.Tenancy{} = tenancy}} =
       attrs
       |> Enum.into(%{
         active: true,
@@ -20,7 +20,7 @@ defmodule Painless.TenanciesFixtures do
         notes: "some notes",
         property: "some property",
         rent: 42,
-        rent_day_of_month: 42
+        rent_day_of_month: 2
       })
       |> Painless.Tenancies.create_tenancy()
 
