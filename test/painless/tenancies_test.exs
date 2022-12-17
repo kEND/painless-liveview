@@ -1,9 +1,11 @@
 defmodule Painless.TenanciesTest do
   use Painless.DataCase
 
+  alias Painless.Ledgers
   alias Painless.Tenancies
 
   describe "tenancies" do
+    alias Painless.Ledgers.Ledger
     alias Painless.Tenancies.Tenancy
 
     import Painless.TenanciesFixtures
@@ -50,6 +52,9 @@ defmodule Painless.TenanciesTest do
       assert tenancy.property == "some property"
       assert tenancy.rent == Money.new(42)
       assert tenancy.rent_day_of_month == 2
+
+      assert [%Ledger{name: "Rent", acct_type: "Income"}, %Ledger{name: "Expected Rent", acct_type: "Receivable"}] =
+               Ledgers.list_ledgers(tenancy.id)
     end
 
     test "create_tenancy/1 with invalid data returns error changeset" do

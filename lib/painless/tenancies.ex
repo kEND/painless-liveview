@@ -105,13 +105,28 @@ defmodule Painless.Tenancies do
       iex> create_tenancy(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
-  TODO: make into a multi that creates Income and Receivable Ledger records
   """
   def create_tenancy(attrs \\ %{}) do
     tenancy = Tenancy.changeset(%Tenancy{}, attrs)
 
     Multi.new()
     |> Multi.insert(:insert_tenancy, tenancy)
+    |> Multi.insert(:insert_income, fn %{insert_tenancy: tenancy} ->
+      %Ledger{
+        tenancy_id: tenancy.id,
+        name: "Rent",
+        acct_type: "Income",
+        balance: Money.new(0)
+      }
+    end)
+    |> Multi.insert(:insert_receivable, fn %{insert_tenancy: tenancy} ->
+      %Ledger{
+        tenancy_id: tenancy.id,
+        name: "Expected Rent",
+        acct_type: "Receivable",
+        balance: Money.new(0)
+      }
+    end)
     |> Repo.transaction()
   end
 
