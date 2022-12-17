@@ -15,7 +15,7 @@ defmodule PainlessWeb.EntryLive.Index do
      socket
      |> assign(:ledger, ledger)
      |> assign(:tenancy, tenancy)
-     |> assign(:entries, list_entries(ledger_id))}
+     |> assign(:entries, list_entries(tenancy.id))}
   end
 
   @impl true
@@ -49,10 +49,10 @@ defmodule PainlessWeb.EntryLive.Index do
     entry = Ledgers.get_entry!(id)
     {:ok, _} = Ledgers.delete_entry(entry)
 
-    {:noreply, assign(socket, :entries, list_entries(socket.assigns.ledger.id))}
+    {:noreply, assign(socket, :entries, list_entries(socket.assigns.ledger.tenancy_id))}
   end
 
-  defp list_entries(ledger_id) do
-    Ledgers.list_entries(ledger_id)
+  defp list_entries(tenancy_id) do
+    Tenancies.list_combined_entries(tenancy_id, 20)
   end
 end

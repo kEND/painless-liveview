@@ -29,7 +29,7 @@
 </.table>
 
 <%= if @live_action in [:new, :edit] do %>
-  <.modal id="entry-modal" show on_cancel={JS.navigate(~p"/tenancies/#{@ledger.tenancy_id}/ledgers/#{@ledger}/entries")}>
+  <.modal id="entry-modal" show on_cancel={JS.navigate(~p"/tenancies/#{@ledger.tenancy_id}")}>
     <.live_component
       module={PainlessWeb.EntryLive.FormComponent}
       id={@entry.id || :new}
