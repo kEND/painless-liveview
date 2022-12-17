@@ -4,6 +4,8 @@ defmodule Painless.LedgersFixtures do
   entities via the `Painless.Ledgers` context.
   """
 
+  alias Painless.TenanciesFixtures
+
   @doc """
   Generate a ledger.
   """
@@ -13,7 +15,8 @@ defmodule Painless.LedgersFixtures do
       |> Enum.into(%{
         acct_type: "some acct_type",
         balance: 42,
-        name: "some name"
+        name: "some name",
+        tenancy_id: TenanciesFixtures.tenancy_fixture().id
       })
       |> Painless.Ledgers.create_ledger()
 
@@ -29,10 +32,11 @@ defmodule Painless.LedgersFixtures do
       |> Enum.into(%{
         amount: 42,
         description: "some description",
-        transaction_date: ~N[2022-09-28 03:04:00]
+        transaction_date: ~N[2022-09-28 03:04:00],
+        ledger_id: ledger_fixture().id
       })
       |> Painless.Ledgers.create_entry()
 
-    entry
+    entry |> Painless.Repo.preload(ledger: :tenancy)
   end
 end

@@ -7,12 +7,14 @@ defmodule Painless.LedgersTest do
     alias Painless.Ledgers.Ledger
 
     import Painless.LedgersFixtures
+    import Painless.TenanciesFixtures
 
     @invalid_attrs %{acct_type: nil, balance: nil, name: nil}
 
-    test "list_ledgers/0 returns all ledgers" do
-      ledger = ledger_fixture()
-      assert Ledgers.list_ledgers() == [ledger]
+    test "list_ledgers/1 returns all ledgers for a tenancy" do
+      tenancy = tenancy_fixture()
+      ledger = ledger_fixture(tenancy_id: tenancy.id)
+      assert Ledgers.list_ledgers(tenancy.id) == [ledger]
     end
 
     test "get_ledger!/1 returns the ledger with given id" do
@@ -21,11 +23,12 @@ defmodule Painless.LedgersTest do
     end
 
     test "create_ledger/1 with valid data creates a ledger" do
-      valid_attrs = %{acct_type: "some acct_type", balance: 42, name: "some name"}
+      tenancy = tenancy_fixture()
+      valid_attrs = %{acct_type: "some acct_type", balance: 42, name: "some name", tenancy_id: tenancy.id}
 
       assert {:ok, %Ledger{} = ledger} = Ledgers.create_ledger(valid_attrs)
       assert ledger.acct_type == "some acct_type"
-      assert ledger.balance == 42
+      assert ledger.balance == Money.new(42)
       assert ledger.name == "some name"
     end
 
@@ -39,7 +42,7 @@ defmodule Painless.LedgersTest do
 
       assert {:ok, %Ledger{} = ledger} = Ledgers.update_ledger(ledger, update_attrs)
       assert ledger.acct_type == "some updated acct_type"
-      assert ledger.balance == 43
+      assert ledger.balance == Money.new(43)
       assert ledger.name == "some updated name"
     end
 
@@ -68,9 +71,10 @@ defmodule Painless.LedgersTest do
 
     @invalid_attrs %{amount: nil, description: nil, transaction_date: nil}
 
-    test "list_entries/0 returns all entries" do
-      entry = entry_fixture()
-      assert Ledgers.list_entries() == [entry]
+    test "list_entries/1 returns all entries for a ledger" do
+      ledger = ledger_fixture()
+      entry = entry_fixture(ledger_id: ledger.id)
+      assert Ledgers.list_entries(ledger.id) |> Enum.map(&Painless.Repo.preload(&1, ledger: :tenancy)) == [entry]
     end
 
     test "get_entry!/1 returns the entry with given id" do
@@ -79,12 +83,19 @@ defmodule Painless.LedgersTest do
     end
 
     test "create_entry/1 with valid data creates a entry" do
-      valid_attrs = %{amount: 42, description: "some description", transaction_date: ~N[2022-09-28 03:04:00]}
+      ledger = ledger_fixture()
+
+      valid_attrs = %{
+        amount: 42,
+        description: "some description",
+        transaction_date: ~N[2022-09-28 03:04:00],
+        ledger_id: ledger.id
+      }
 
       assert {:ok, %Entry{} = entry} = Ledgers.create_entry(valid_attrs)
-      assert entry.amount == 42
+      assert entry.amount == Money.new(42)
       assert entry.description == "some description"
-      assert entry.transaction_date == ~N[2022-09-28 03:04:00]
+      assert entry.transaction_date == ~D[2022-09-28]
     end
 
     test "create_entry/1 with invalid data returns error changeset" do
@@ -96,9 +107,9 @@ defmodule Painless.LedgersTest do
       update_attrs = %{amount: 43, description: "some updated description", transaction_date: ~N[2022-09-29 03:04:00]}
 
       assert {:ok, %Entry{} = entry} = Ledgers.update_entry(entry, update_attrs)
-      assert entry.amount == 43
+      assert entry.amount == Money.new(43)
       assert entry.description == "some updated description"
-      assert entry.transaction_date == ~N[2022-09-29 03:04:00]
+      assert entry.transaction_date == ~D[2022-09-29]
     end
 
     test "update_entry/2 with invalid data returns error changeset" do
