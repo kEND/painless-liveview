@@ -35,3 +35,6 @@ npm-debug.log
 *.sh
 /priv/dumps/
 
+# apple
+.DS_Store
+*/**/.DS_Store
