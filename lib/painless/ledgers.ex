@@ -204,13 +204,13 @@ defmodule Painless.Ledgers do
   end
 
   def maybe_add_expected_rents(active_tenancies) do
+    # this function will break if you future date a receivable entry
     active_tenancies = Repo.preload(active_tenancies, :ledgers)
 
     ledger_ids =
-      active_tenancies
-      |> Enum.map(fn %{ledgers: ledgers} ->
+      Enum.reduce(active_tenancies, [], fn %{ledgers: ledgers}, acc ->
         ledger = Enum.find(ledgers, &(&1.acct_type == "Receivable"))
-        ledger.id
+        [ledger.id | acc]
       end)
 
     most_recent_expected_rent_beginning_of_month =
