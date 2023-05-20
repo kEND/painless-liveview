@@ -35,3 +35,9 @@ painless-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# ignore .sh scripts in root
+*.sh
+
+# ignore database dumps
+/priv/dumps/
+
