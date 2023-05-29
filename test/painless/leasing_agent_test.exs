@@ -6,7 +6,9 @@ defmodule Painless.LeasingAgentTest do
 
   describe "new/1" do
     test "constructs a tenancy data structure from string-based input not persisted to the database" do
-      leasing_agent = LeasingAgent.new(%{"name" => "Jon & Nita Gomez"})
+      leasing_agent =
+        LeasingAgent.new(%{"name" => "Jon & Nita Gomez", "property" => "123 Main St."})
+
       assert leasing_agent.current_tenancy.name == "Jon & Nita Gomez"
       assert leasing_agent.saved_tenancy? == false
 
@@ -16,7 +18,7 @@ defmodule Painless.LeasingAgentTest do
                inserted_at: nil,
                name: "Jon & Nita Gomez",
                notes: nil,
-               property: nil,
+               property: "123 Main St.",
                rent_day_of_month: 1,
                updated_at: nil
              }
