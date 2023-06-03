@@ -14,4 +14,8 @@ defmodule Painless.LeasingAgent do
         %__MODULE__{current_tenancy: tenancy}
     end
   end
+
+  def tenancies(active \\ true) do
+    Core.tenancies(active)
+  end
 end

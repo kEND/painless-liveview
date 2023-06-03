@@ -9,4 +9,11 @@ defmodule Painless.LeasingAgent.Core do
     |> where([t], name: ^params["name"], property: ^params["property"])
     |> Repo.one()
   end
+
+  def tenancies(active \\ true) do
+    Tenancy
+    |> where([t], t.active == ^active)
+    |> order_by([t], asc: t.property, asc: t.name)
+    |> Repo.all()
+  end
 end
