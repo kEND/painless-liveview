@@ -15,6 +15,16 @@ defmodule Painless.LeasingAgent do
     end
   end
 
+  def new(%{"tenancy_id" => id}) do
+    case Core.get!(id) do
+      nil ->
+        %__MODULE__{current_tenancy: %Tenancy{}}
+
+      tenancy ->
+        %__MODULE__{current_tenancy: tenancy}
+    end
+  end
+
   def tenancies(active \\ true) do
     Core.tenancies(active)
   end

@@ -10,6 +10,8 @@ defmodule Painless.LeasingAgent.Core do
     |> Repo.one()
   end
 
+  def get!(id), do: Repo.get!(Tenancy, id)
+
   def tenancies(active \\ true) do
     Tenancy
     |> where([t], t.active == ^active)

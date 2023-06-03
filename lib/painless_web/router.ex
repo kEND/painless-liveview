@@ -68,7 +68,10 @@ defmodule PainlessWeb.Router do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 
-      live "/leasing", LeasingLive, :index
+      scope "/leasing" do
+        live "/", LeasingLive, :index
+        live "/:tenancy_id/entries", EntriesLive, :index
+      end
     end
   end
 
