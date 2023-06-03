@@ -59,6 +59,28 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# configure Money
+# this allows you to do Money.new(100)
+config :money,
+  # change the default thousands separator for Money.to_string
+  default_currency: :USD,
+  # change the default decimal delimiter for Money.to_string
+  separator: ",",
+  # don’t display the currency symbol in Money.to_string
+  delimiter: ".",
+  # position the symbol
+  symbol: true,
+  # add a space between symbol and number
+  symbol_on_right: false,
+  # display units after the delimiter
+  symbol_space: false,
+  # don’t display the insignificant zeros or the delimiter
+  fractional_unit: true,
+  # add the currency code after the number
+  strip_insignificant_zeros: false,
+  code: false,
+  minus_sign_first: true
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

@@ -41,3 +41,6 @@ npm-debug.log
 # ignore database dumps
 /priv/dumps/
 
+# apple
+.DS_Store
+*/**/.DS_Store
