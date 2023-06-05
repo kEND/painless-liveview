@@ -5,7 +5,7 @@ defmodule PainlessWeb.LeasingLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-xxl">
       <.header class="text-center">
         Active Tenancies
         <:subtitle>
