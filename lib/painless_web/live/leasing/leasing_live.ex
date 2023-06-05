@@ -15,7 +15,7 @@ defmodule PainlessWeb.LeasingLive do
 
       <%!-- <pre><%= inspect(@tenancies, pretty: true) %></pre> --%>
 
-      <.table id="tenancies" rows={@tenancies}>
+      <.table id="tenancies" rows={@tenancies} row_click={fn tenancy -> JS.navigate(~p"/leasing/#{tenancy}/entries") end}>
         <:col :let={tenancy} label="id"><%= tenancy.id %></:col>
         <:col :let={tenancy} label="name"><%= tenancy.name %></:col>
         <:col :let={tenancy} label="property"><%= tenancy.property %></:col>

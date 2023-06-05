@@ -9,8 +9,13 @@ defmodule PainlessWeb.EntriesLive do
     <div class="mx-auto max-w-sm">
       <.header class="text-center">
         Account Entries for <%= @tenancy.name %>
+        <:actions>
+          <.link patch={~p"/leasing"}>
+            <.button>Active Tenancies</.button>
+          </.link>
+        </:actions>
         <:subtitle>
-          currently leasing <%= @tenancy.property %>... <.icon name="hero-banknotes" />
+          currently leasing <%= @tenancy.property %>... Income: <.icon name="hero-banknotes" />
         </:subtitle>
       </.header>
 
