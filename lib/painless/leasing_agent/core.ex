@@ -8,6 +8,7 @@ defmodule Painless.LeasingAgent.Core do
     Tenancy
     |> where([t], name: ^params["name"], property: ^params["property"])
     |> Repo.one()
+    |> set_balance()
   end
 
   def get!(id), do: Repo.get!(Tenancy, id)
@@ -17,5 +18,10 @@ defmodule Painless.LeasingAgent.Core do
     |> where([t], t.active == ^active)
     |> order_by([t], asc: t.property, asc: t.name)
     |> Repo.all()
+    |> Enum.map(&set_balance/1)
+  end
+
+  def set_balance(tenancy) do
+    %{tenancy | balance: Painless.Bookkeeper.balance(tenancy)}
   end
 end

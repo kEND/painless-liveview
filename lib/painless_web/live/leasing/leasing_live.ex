@@ -20,6 +20,7 @@ defmodule PainlessWeb.LeasingLive do
         <:col :let={tenancy} label="name"><%= tenancy.name %></:col>
         <:col :let={tenancy} label="property"><%= tenancy.property %></:col>
         <:col :let={tenancy} label="rent"><%= tenancy.rent %></:col>
+        <:col :let={tenancy} label="balance"><%= tenancy.balance %></:col>
         <:col :let={tenancy} label="notes"><%= tenancy.notes %></:col>
       </.table>
     </div>

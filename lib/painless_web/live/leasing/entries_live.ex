@@ -17,6 +17,7 @@ defmodule PainlessWeb.EntriesLive do
         <:subtitle>
           currently leasing <%= @tenancy.property %>... Income: <.icon name="hero-banknotes" />
         </:subtitle>
+        <p>Balance: <%= @tenancy.balance %></p>
       </.header>
 
       <%!-- <pre><%= inspect(@entries, pretty: true) %></pre> --%>
@@ -45,11 +46,11 @@ defmodule PainlessWeb.EntriesLive do
   end
 
   def mount(params, _session, socket) do
-    tenancy = LeasingAgent.new(params).current_tenancy
+    %{entries: entries} = tenancy = LeasingAgent.new(params).current_tenancy |> Bookkeeper.open()
 
     {:ok,
      socket
      |> assign(tenancy: tenancy)
-     |> stream(:entries, Bookkeeper.entries(tenancy)), temporary_assigns: [tenancy: tenancy]}
+     |> stream(:entries, entries), temporary_assigns: [tenancy: tenancy]}
   end
 end
