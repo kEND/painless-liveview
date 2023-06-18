@@ -8,7 +8,10 @@ defmodule Painless.LeasingAgent.Core do
     Tenancy
     |> where([t], name: ^params["name"], property: ^params["property"])
     |> Repo.one()
-    |> set_balance()
+    |> case do
+      nil -> nil
+      tenancy -> set_balance(tenancy)
+    end
   end
 
   def get!(id), do: Repo.get!(Tenancy, id)
