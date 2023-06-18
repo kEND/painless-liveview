@@ -18,6 +18,9 @@ defmodule PainlessWeb.EntriesLive do
           currently leasing <%= @tenancy.property %>... Income: <.icon name="hero-banknotes" />
         </:subtitle>
         <p>Balance: <%= @tenancy.balance %></p>
+        <p class="text-sm">
+          <%= @tenancy.notes %>
+        </p>
       </.header>
 
       <%!-- <pre><%= inspect(@entries, pretty: true) %></pre> --%>
