@@ -39,10 +39,7 @@ defmodule PainlessWeb.EntriesLive do
           <.link patch={~p"/leasing/#{@tenancy}/entries/#{entry}/edit"}>Edit</.link>
         </:action>
         <:action :let={{id, entry}}>
-          <.link
-            phx-click={JS.push("delete", value: %{id: entry.id}) |> hide("##{id}")}
-            data-confirm="Are you sure?"
-          >
+          <.link phx-click={JS.push("delete", value: %{id: entry.id}) |> hide("##{id}")} data-confirm="Are you sure?">
             Delete
           </.link>
         </:action>

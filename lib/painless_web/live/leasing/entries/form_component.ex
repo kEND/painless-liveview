@@ -13,7 +13,7 @@ defmodule PainlessWeb.Entries.FormComponent do
       </.header>
 
       <.simple_form for={@form} id="entry-form" phx-target={@myself} phx-change="validate" phx-submit="save">
-        <.input field={@form[:tenancy_id]} type="hidden" value={@tenancy.id}/>
+        <.input field={@form[:tenancy_id]} type="hidden" value={@tenancy.id} />
         <.input field={@form[:description]} type="text" label="Description" />
         <.input field={@form[:amount]} type="text" label="Amount" />
         <.input field={@form[:transaction_date]} type="date" label="Date" />
