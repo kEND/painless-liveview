@@ -7,9 +7,23 @@ defmodule PainlessWeb.LeasingLive do
     ~H"""
     <div class="mx-auto max-w-xxl">
       <.header class="text-center">
-        Active Tenancies
+        <div :if={@show_active}>Active Tenancies</div>
+        <div :if={!@show_active}>All Tenancies</div>
         <:subtitle>
-          Just a listing for now...
+          <div class="flex items-center justify-between w-1/3">
+            <span>
+              Show only active:
+            </span>
+            <span>
+              <.input
+                type="checkbox"
+                name="show-active"
+                checked={@show_active}
+                value={@show_active}
+                phx-click={JS.push("toggle_active")}
+              />
+            </span>
+          </div>
         </:subtitle>
       </.header>
 
@@ -38,6 +52,20 @@ defmodule PainlessWeb.LeasingLive do
 
   def mount(_params, _session, socket) do
     tenancies = LeasingAgent.tenancies()
-    {:ok, assign(socket, tenancies: tenancies), temporary_assigns: [tenancies: tenancies]}
+
+    {:ok,
+     socket
+     |> assign(show_active: true)
+     |> assign(tenancies: tenancies)}
+  end
+
+  def handle_event("toggle_active", _, socket) do
+    IO.inspect(socket.assigns.show_active)
+    show_active = !socket.assigns.show_active
+
+    {:noreply,
+     socket
+     |> assign(:show_active, show_active)
+     |> assign(:tenancies, LeasingAgent.tenancies(show_active))}
   end
 end
