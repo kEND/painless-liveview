@@ -21,6 +21,16 @@ defmodule PainlessWeb.LeasingLive do
         <:col :let={tenancy} label="property"><%= tenancy.property %></:col>
         <:col :let={tenancy} label="rent"><%= tenancy.rent %></:col>
         <:col :let={tenancy} label="balance"><%= tenancy.balance %></:col>
+        <:action :let={tenancy}>
+          <.link patch={~p"/leasing/#{tenancy}/entries/new"}>
+            <.icon name="hero-banknotes" />
+          </.link>
+        </:action>
+        <:action :let={tenancy}>
+          <.link patch={~p"/leasing/#{tenancy}/entries"}>
+            <.icon name="hero-queue-list" />
+          </.link>
+        </:action>
       </.table>
     </div>
     """
