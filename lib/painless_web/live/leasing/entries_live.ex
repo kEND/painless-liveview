@@ -102,7 +102,7 @@ defmodule PainlessWeb.EntriesLive do
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Entry")
-    |> assign(:entry, %Entry{})
+    |> assign(:entry, %Entry{transaction_date: Date.utc_today()})
   end
 
   defp apply_action(socket, :index, _params) do
