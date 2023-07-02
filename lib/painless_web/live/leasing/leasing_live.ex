@@ -7,8 +7,16 @@ defmodule PainlessWeb.LeasingLive do
     ~H"""
     <div class="mx-auto max-w-xxl">
       <.header class="text-center">
-        <div :if={@show_active}>Active Tenancies</div>
-        <div :if={!@show_active}>All Tenancies</div>
+        <div :if={@show_active}>
+          List
+          <a phx-click={JS.push("toggle_active")}>Active</a>
+          Tenancies
+        </div>
+        <div :if={!@show_active}>
+          List
+          <a phx-click={JS.push("toggle_active")}>All</a>
+          Tenancies
+        </div>
         <:subtitle>
           <div class="flex items-center justify-between w-1/3">
             <span>

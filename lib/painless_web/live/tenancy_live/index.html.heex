@@ -1,0 +1,60 @@
+<.header>
+  <%= if @active == "false", do: "All", else: "Active" %> Tenants
+  <:actions>
+    <.link patch={~p"/tenancies/new"}>
+      <.button>New Tenancy</.button>
+    </.link>
+    <.link :if={@active == "true"} navigate={~p"/tenancies?active=false"}>
+      <.button>All</.button>
+    </.link>
+    <.link :if={@active == "false"} navigate={~p"/tenancies?active=true"}>
+      <.button>Active</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="tenancies"
+  rows={@streams.tenancies}
+  row_click={fn {_id, tenancy} -> JS.navigate(~p"/tenancies/#{tenancy}") end}
+>
+  <:col :let={{_id, tenancy}} label="ID"><%= tenancy.id %></:col>
+  <:col :let={{_id, tenancy}} label="Name"><%= tenancy.name %></:col>
+  <:col :let={{_id, tenancy}} label="Property"><%= tenancy.property %></:col>
+  <:col :let={{_id, tenancy}} label="Rent"><%= tenancy.rent %></:col>
+  <:col :let={{_id, tenancy}} label="Balance"><%= tenancy.balance %></:col>
+  <:action :let={{_id, tenancy}}>
+    <.link patch={~p"/leasing/#{tenancy}/entries/new"}>
+      <.icon name="hero-banknotes" />
+    </.link>
+  </:action>
+  <:action :let={{_id, tenancy}}>
+    <.link patch={~p"/leasing/#{tenancy}/entries"}>
+      <.icon name="hero-queue-list" />
+    </.link>
+  </:action>
+  <:action :let={{_id, tenancy}}>
+    <div class="sr-only">
+      <.link navigate={~p"/tenancies/#{tenancy}"}>Show</.link>
+    </div>
+    <.link patch={~p"/tenancies/#{tenancy}/edit"}>
+      <.icon name="hero-pencil-square" />
+    </.link>
+  </:action>
+  <:action :let={{id, tenancy}}>
+    <.link phx-click={JS.push("delete", value: %{id: tenancy.id}) |> hide("##{id}")} data-confirm="Are you sure?">
+      <.icon name="hero-trash" />
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="tenancy-modal" show on_cancel={JS.patch(~p"/tenancies")}>
+  <.live_component
+    module={PainlessWeb.TenancyLive.FormComponent}
+    id={@tenancy.id || :new}
+    title={@page_title}
+    action={@live_action}
+    tenancy={@tenancy}
+    patch={~p"/tenancies"}
+  />
+</.modal>

@@ -11,6 +11,8 @@ defmodule Painless.LeasingAgent.Tenancy do
     field :property, :string
     field :rent, Money.Ecto.Amount.Type
     field :rent_day_of_month, :integer, default: 1
+    field :recurring, :boolean, default: false
+    field :recurring_description, :string
 
     timestamps()
 
@@ -24,10 +26,12 @@ defmodule Painless.LeasingAgent.Tenancy do
     :rent,
     :late_fee,
     :active,
-    :rent_day_of_month
+    :rent_day_of_month,
+    :recurring,
+    :recurring_description
   ]
 
-  @required_fields [:name, :property]
+  @required_fields [:name, :property, :rent_day_of_month]
 
   @doc false
   def changeset(tenancy, attrs) do

@@ -1,0 +1,34 @@
+<.header>
+  Tenancy <%= @tenancy.id %>
+  <:subtitle>This is a tenancy record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/tenancies/#{@tenancy}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit tenancy</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @tenancy.name %></:item>
+  <:item title="Property"><%= @tenancy.property %></:item>
+  <:item title="Notes"><%= @tenancy.notes %></:item>
+  <:item title="Active"><%= @tenancy.active %></:item>
+  <:item title="Recurring"><%= @tenancy.recurring %></:item>
+  <:item title="Recurring description"><%= @tenancy.recurring_description %></:item>
+  <:item title="Late fee"><%= @tenancy.late_fee %></:item>
+  <:item title="Rent"><%= @tenancy.rent %></:item>
+  <:item title="Rent day of month"><%= @tenancy.rent_day_of_month %></:item>
+</.list>
+
+<.back navigate={~p"/tenancies"}>Back to tenancies</.back>
+
+<.modal :if={@live_action == :edit} id="tenancy-modal" show on_cancel={JS.patch(~p"/tenancies/#{@tenancy}")}>
+  <.live_component
+    module={PainlessWeb.TenancyLive.FormComponent}
+    id={@tenancy.id}
+    title={@page_title}
+    action={@live_action}
+    tenancy={@tenancy}
+    patch={~p"/tenancies/#{@tenancy}"}
+  />
+</.modal>

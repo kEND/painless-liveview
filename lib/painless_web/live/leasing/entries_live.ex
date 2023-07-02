@@ -12,7 +12,7 @@ defmodule PainlessWeb.EntriesLive do
       <.header class="text-center">
         Account Entries for <%= @tenancy.name %>
         <:actions>
-          <.link navigate={~p"/leasing"}>
+          <.link navigate={~p"/tenancies"}>
             <.button>Active Tenancies</.button>
           </.link>
           <.link patch={~p"/leasing/#{@tenancy}/entries/new"}>
