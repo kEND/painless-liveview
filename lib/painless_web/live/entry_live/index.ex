@@ -40,7 +40,7 @@ defmodule PainlessWeb.EntryLive.Index do
 
   @impl true
   def handle_info({PainlessWeb.EntryLive.FormComponent, {:saved, entry}}, socket) do
-    {:noreply, stream_insert(socket, :entries, entry)}
+    {:noreply, stream_insert(socket, :entries, entry, at: 0)}
   end
 
   @impl true
