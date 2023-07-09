@@ -10,9 +10,9 @@ defmodule Painless.Bookkeeper.Entry do
     field :transaction_type, :string
     field :transaction_date, :date
 
-    timestamps()
-
     belongs_to :tenancy, Painless.LeasingAgent.Tenancy
+
+    timestamps()
   end
 
   @fields [

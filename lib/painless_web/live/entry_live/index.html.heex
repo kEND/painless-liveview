@@ -1,0 +1,55 @@
+<.header>
+  Account Entries for <%= @tenancy.name %>
+  <:actions>
+    <.link patch={~p"/tenancies/#{@tenancy}/entries/new"}>
+      <.button>New Entry</.button>
+    </.link>
+    <.link navigate={~p"/tenancies"}>
+      <.button><.icon name="hero-home-modern" /></.button>
+    </.link>
+  </:actions>
+  <:subtitle>
+    currently leasing <%= @tenancy.property %>... Income: <.icon name="hero-banknotes" />
+  </:subtitle>
+  <p>Balance: <%= @tenancy.balance %></p>
+  <p class="text-sm">
+    <%= @tenancy.notes %>
+  </p>
+</.header>
+
+<.table
+  id="entries"
+  rows={@streams.entries}
+  row_item={&display_income/1}
+  row_click={fn {_id, entry} -> JS.navigate(~p"/tenancies/#{@tenancy}/entries/#{entry}") end}
+>
+  <:col :let={{_id, entry}} label="Date"><%= entry.transaction_date %></:col>
+  <:col :let={{_id, entry}} label="Amount"><%= entry.amount %></:col>
+  <:col :let={{_id, entry}} label="--"><%= entry.transaction_type %></:col>
+  <:col :let={{_id, entry}} label="Description"><%= entry.description %></:col>
+  <:action :let={{_id, entry}}>
+    <div class="sr-only">
+      <.link navigate={~p"/tenancies/#{@tenancy}/entries/#{entry}"}>Show</.link>
+    </div>
+    <.link patch={~p"/tenancies/#{@tenancy}/entries/#{entry}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, entry}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: entry.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="entry-modal" show on_cancel={JS.patch(~p"/tenancies/#{@tenancy}/entries")}>
+  <.live_component
+    module={PainlessWeb.EntryLive.FormComponent}
+    id={@entry.id || :new}
+    title={@page_title}
+    action={@live_action}
+    entry={@entry}
+    patch={~p"/tenancies/#{@tenancy}/entries"}
+  />
+</.modal>
