@@ -9,7 +9,7 @@ defmodule PainlessWeb.EntryLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage entry records in your database.</:subtitle>
+        <:subtitle>Use this form to manage account entries for <%= @tenancy.name %> for <%= @tenancy.property %>.</:subtitle>
       </.header>
 
       <.simple_form
@@ -19,10 +19,11 @@ defmodule PainlessWeb.EntryLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:amount]} type="number" label="Amount" />
+        <.input field={@form[:tenancy_id]} type="hidden" value={@tenancy.id} />
         <.input field={@form[:description]} type="text" label="Description" />
-        <.input field={@form[:transaction_type]} type="text" label="Transaction type" />
-        <.input field={@form[:transaction_date]} type="date" label="Transaction date" />
+        <.input field={@form[:amount]} type="text" label="Amount" />
+        <.input field={@form[:transaction_date]} type="date" label="Date" />
+        <.input field={@form[:transaction_type]} type="select" options={[:income, :receivable]} label="Income/Receivable" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Entry</.button>
         </:actions>

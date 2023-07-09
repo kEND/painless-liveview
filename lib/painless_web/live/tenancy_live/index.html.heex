@@ -24,12 +24,12 @@
   <:col :let={{_id, tenancy}} label="Rent"><%= tenancy.rent %></:col>
   <:col :let={{_id, tenancy}} label="Balance"><%= tenancy.balance %></:col>
   <:action :let={{_id, tenancy}}>
-    <.link patch={~p"/leasing/#{tenancy}/entries/new"}>
+    <.link patch={~p"/tenancies/#{tenancy}/entries/new"}>
       <.icon name="hero-banknotes" />
     </.link>
   </:action>
   <:action :let={{_id, tenancy}}>
-    <.link patch={~p"/leasing/#{tenancy}/entries"}>
+    <.link patch={~p"/tenancies/#{tenancy}/entries"}>
       <.icon name="hero-queue-list" />
     </.link>
   </:action>
