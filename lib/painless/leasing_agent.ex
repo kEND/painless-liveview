@@ -2,38 +2,8 @@ defmodule Painless.LeasingAgent do
   import Ecto.Query, warn: false
 
   alias Painless.Bookkeeper.Entry
-  alias Painless.LeasingAgent.Core
   alias Painless.LeasingAgent.Tenancy
   alias Painless.Repo
-
-  defstruct current_tenancy: %Tenancy{},
-            saved_tenancy?: false
-
-  def new(%{"name" => name, "property" => property} = params) do
-    case Core.find_tenancy(params) do
-      nil ->
-        %__MODULE__{current_tenancy: %Tenancy{name: name, property: property}}
-
-      tenancy ->
-        %__MODULE__{current_tenancy: tenancy}
-    end
-  end
-
-  def new(%{"tenancy_id" => id}) do
-    case Core.get!(id) do
-      nil ->
-        %__MODULE__{current_tenancy: %Tenancy{}}
-
-      tenancy ->
-        %__MODULE__{current_tenancy: tenancy}
-    end
-  end
-
-  def tenancies(active \\ true) do
-    Core.tenancies(active)
-  end
-
-  alias Painless.LeasingAgent.Tenancy
 
   @doc """
   Returns the list of tenancies.
