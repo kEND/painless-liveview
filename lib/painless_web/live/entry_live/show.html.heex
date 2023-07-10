@@ -2,7 +2,7 @@
   Entry <%= @entry.id %>
   <:subtitle>This is a entry record from your database.</:subtitle>
   <:actions>
-    <.link patch={~p"/entries/#{@entry}/show/edit"} phx-click={JS.push_focus()}>
+    <.link patch={~p"/tenancies/#{@tenancy}/entries/#{@entry}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit entry</.button>
     </.link>
   </:actions>
@@ -15,15 +15,16 @@
   <:item title="Transaction date"><%= @entry.transaction_date %></:item>
 </.list>
 
-<.back navigate={~p"/entries"}>Back to entries</.back>
+<.back navigate={~p"/tenancies/#{@tenancy}/entries"}>Back to entries</.back>
 
-<.modal :if={@live_action == :edit} id="entry-modal" show on_cancel={JS.patch(~p"/entries/#{@entry}")}>
+<.modal :if={@live_action == :edit} id="entry-modal" show on_cancel={JS.patch(~p"/tenancies/#{@tenancy}/entries/#{@entry}")}>
   <.live_component
     module={PainlessWeb.EntryLive.FormComponent}
     id={@entry.id}
     title={@page_title}
     action={@live_action}
     entry={@entry}
-    patch={~p"/entries/#{@entry}"}
+    tenancy={@tenancy}
+    patch={~p"/tenancies/#{@tenancy}/entries/#{@entry}"}
   />
 </.modal>
