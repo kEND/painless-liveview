@@ -2,6 +2,7 @@ defmodule Painless.Bookkeeper do
   import Ecto.Query, warn: false
 
   alias Painless.Bookkeeper.Entry
+  alias Painless.LeasingAgent.Tenancy
   alias Painless.Repo
 
   @doc """
@@ -99,5 +100,39 @@ defmodule Painless.Bookkeeper do
   """
   def change_entry(%Entry{} = entry, attrs \\ %{}) do
     Entry.changeset(entry, attrs)
+  end
+
+  @doc """
+  List recurring entries for active tenancies.
+  """
+  def list_recurring_entries_for_active_tenancies() do
+    query = from e in Entry,
+      join: t in Tenancy,
+      on: e.tenancy_id == t.id,
+      where: t.active == true,
+      where: t.recurring == true,
+      where: e.transaction_type == "receivable",
+      where: ilike(e.description, fragment("(? || '%')", t.recurring_description)),
+      where: fragment("? = make_date(date_part('year', now())::int, date_part('month', now())::int, ?)", e.transaction_date, t.rent_day_of_month),
+      select: %{tenancy_id: e.tenancy_id, transaction_date: e.transaction_date, description: e.description, amount: e.amount}
+
+    Repo.all(query)
+  end
+
+  def list_of_needed_recurring_entries_for_active_tenancies() do
+    query = from t in Tenancy,
+      where: t.active == true,
+      where: t.recurring == true,
+      select: %{tenancy_id: t.id, transaction_date: fragment("make_date( date_part('year', now())::int, date_part('month', now())::int, ?)", t.rent_day_of_month), description: fragment("? || ' ' || trim(to_char(now(), 'Month'))", t.recurring_description), amount: type(t.rent * -1, Money.Ecto.Amount.Type)}
+
+    Repo.all(query)
+  end
+
+  def create_needed_recurring_entries() do
+    MapSet.new(list_of_needed_recurring_entries_for_active_tenancies())
+    |> MapSet.difference(MapSet.new(list_recurring_entries_for_active_tenancies()))
+    |> Enum.each(fn entry ->
+      create_entry(Map.put(entry, :transaction_type, "receivable"))
+    end)
   end
 end
