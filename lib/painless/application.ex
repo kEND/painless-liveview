@@ -17,9 +17,10 @@ defmodule Painless.Application do
       # Start Finch
       {Finch, name: Painless.Finch},
       # Start the Endpoint (http/https)
-      PainlessWeb.Endpoint
+      PainlessWeb.Endpoint,
       # Start a worker by calling: Painless.Worker.start_link(arg)
       # {Painless.Worker, arg}
+      Painless.Bookkeeper.RecurringEntries
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

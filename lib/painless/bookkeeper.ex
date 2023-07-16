@@ -128,7 +128,7 @@ defmodule Painless.Bookkeeper do
     Repo.all(query)
   end
 
-  def create_needed_recurring_entries() do
+  def maybe_create_recurring_entries() do
     MapSet.new(list_of_needed_recurring_entries_for_active_tenancies())
     |> MapSet.difference(MapSet.new(list_recurring_entries_for_active_tenancies()))
     |> Enum.each(fn entry ->
