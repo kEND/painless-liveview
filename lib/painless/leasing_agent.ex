@@ -49,6 +49,7 @@ defmodule Painless.LeasingAgent do
     Entry
     |> select([e], %{balance: type(sum(e.amount), Money.Ecto.Type)})
     |> where([e, t], e.tenancy_id == parent_as(:tenancy).id)
+    |> where([e, t], e.transaction_date < ago(1, "microsecond"))
     |> group_by([e], e.tenancy_id)
   end
 
