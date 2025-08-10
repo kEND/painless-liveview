@@ -17,6 +17,7 @@ defmodule Painless.Bookkeeper.RecurringEntries do
   def handle_info(:maybe_create_entries, state) do
     Bookkeeper.maybe_create_recurring_entries()
     |> IO.puts()
+
     schedule()
     {:noreply, state}
   end

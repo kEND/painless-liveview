@@ -10,9 +10,9 @@ defmodule PainlessWeb.EntryLive.Index do
     tenancy = LeasingAgent.get_tenancy!(params["tenancy_id"])
 
     {:ok,
-      socket
-      |> assign(tenancy: tenancy)
-      |> stream(:entries, Bookkeeper.list_entries(tenancy.id))}
+     socket
+     |> assign(tenancy: tenancy)
+     |> stream(:entries, Bookkeeper.list_entries(tenancy.id))}
   end
 
   @impl true
@@ -63,5 +63,4 @@ defmodule PainlessWeb.EntryLive.Index do
 
     {id, Map.merge(entry, %{transaction_type: transaction_type})}
   end
-
 end

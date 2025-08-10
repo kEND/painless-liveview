@@ -17,7 +17,12 @@
 
 <.back navigate={~p"/tenancies/#{@tenancy}/entries"}>Back to entries</.back>
 
-<.modal :if={@live_action == :edit} id="entry-modal" show on_cancel={JS.patch(~p"/tenancies/#{@tenancy}/entries/#{@entry}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="entry-modal"
+  show
+  on_cancel={JS.patch(~p"/tenancies/#{@tenancy}/entries/#{@entry}")}
+>
   <.live_component
     module={PainlessWeb.EntryLive.FormComponent}
     id={@entry.id}

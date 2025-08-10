@@ -4,8 +4,18 @@ defmodule PainlessWeb.EntryLiveTest do
   import Phoenix.LiveViewTest
   import Painless.BookkeeperFixtures
 
-  @create_attrs %{amount: 42, description: "some description", transaction_date: "2023-07-08", transaction_type: "some transaction_type"}
-  @update_attrs %{amount: 43, description: "some updated description", transaction_date: "2023-07-09", transaction_type: "some updated transaction_type"}
+  @create_attrs %{
+    amount: 42,
+    description: "some description",
+    transaction_date: "2023-07-08",
+    transaction_type: "some transaction_type"
+  }
+  @update_attrs %{
+    amount: 43,
+    description: "some updated description",
+    transaction_date: "2023-07-09",
+    transaction_type: "some updated transaction_type"
+  }
   @invalid_attrs %{amount: nil, description: nil, transaction_date: nil, transaction_type: nil}
 
   defp create_entry(_) do

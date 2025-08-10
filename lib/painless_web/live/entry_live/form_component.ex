@@ -9,16 +9,12 @@ defmodule PainlessWeb.EntryLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage account entries for <%= @tenancy.name %> for <%= @tenancy.property %>.</:subtitle>
+        <:subtitle>
+          Use this form to manage account entries for <%= @tenancy.name %> for <%= @tenancy.property %>.
+        </:subtitle>
       </.header>
 
-      <.simple_form
-        for={@form}
-        id="entry-form"
-        phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
-      >
+      <.simple_form for={@form} id="entry-form" phx-target={@myself} phx-change="validate" phx-submit="save">
         <.input field={@form[:tenancy_id]} type="hidden" value={@tenancy.id} />
         <.input field={@form[:description]} type="text" label="Description" />
         <.input field={@form[:amount]} type="text" label="Amount" />

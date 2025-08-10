@@ -34,16 +34,18 @@
     <.link patch={~p"/tenancies/#{@tenancy}/entries/#{entry}/edit"}>Edit</.link>
   </:action>
   <:action :let={{id, entry}}>
-    <.link
-      phx-click={JS.push("delete", value: %{id: entry.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
-    >
+    <.link phx-click={JS.push("delete", value: %{id: entry.id}) |> hide("##{id}")} data-confirm="Are you sure?">
       Delete
     </.link>
   </:action>
 </.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="entry-modal" show on_cancel={JS.patch(~p"/tenancies/#{@tenancy}/entries")}>
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="entry-modal"
+  show
+  on_cancel={JS.patch(~p"/tenancies/#{@tenancy}/entries")}
+>
   <.live_component
     module={PainlessWeb.EntryLive.FormComponent}
     id={@entry.id || :new}

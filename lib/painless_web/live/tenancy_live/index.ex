@@ -9,9 +9,9 @@ defmodule PainlessWeb.TenancyLive.Index do
     active = params["active"] || "true"
 
     {:ok,
-      socket
-      |> assign(active: active)
-      |> stream(:tenancies, LeasingAgent.list_tenancies(active))}
+     socket
+     |> assign(active: active)
+     |> stream(:tenancies, LeasingAgent.list_tenancies(active))}
   end
 
   @impl true

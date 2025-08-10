@@ -21,7 +21,12 @@ defmodule Painless.BookkeeperTest do
     end
 
     test "create_entry/1 with valid data creates a entry" do
-      valid_attrs = %{amount: 42, description: "some description", transaction_date: ~D[2023-07-08], transaction_type: "some transaction_type"}
+      valid_attrs = %{
+        amount: 42,
+        description: "some description",
+        transaction_date: ~D[2023-07-08],
+        transaction_type: "some transaction_type"
+      }
 
       assert {:ok, %Entry{} = entry} = Bookkeeper.create_entry(valid_attrs)
       assert entry.amount == 42
@@ -36,7 +41,13 @@ defmodule Painless.BookkeeperTest do
 
     test "update_entry/2 with valid data updates the entry" do
       entry = entry_fixture()
-      update_attrs = %{amount: 43, description: "some updated description", transaction_date: ~D[2023-07-09], transaction_type: "some updated transaction_type"}
+
+      update_attrs = %{
+        amount: 43,
+        description: "some updated description",
+        transaction_date: ~D[2023-07-09],
+        transaction_type: "some updated transaction_type"
+      }
 
       assert {:ok, %Entry{} = entry} = Bookkeeper.update_entry(entry, update_attrs)
       assert entry.amount == 43
