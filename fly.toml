@@ -5,6 +5,7 @@
 
 app = "painlesspm"
 primary_region = "ewr"
+swap_size_mb = 512
 kill_signal = "SIGTERM"
 
 [deploy]
