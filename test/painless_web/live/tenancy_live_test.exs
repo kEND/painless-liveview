@@ -56,6 +56,18 @@ defmodule PainlessWeb.TenancyLiveTest do
       assert html =~ tenancy.name
     end
 
+    test "links to add a note for a tenancy", %{conn: conn, tenancy: tenancy} do
+      {:ok, index_live, _html} = live(conn, ~p"/tenancies")
+
+      {:ok, _show_live, html} =
+        index_live
+        |> element("#tenancies-#{tenancy.id} a", "Add note")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/tenancies/#{tenancy}/notes/new")
+
+      assert html =~ "New Note"
+    end
+
     test "saves new tenancy", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/tenancies")
 
@@ -118,6 +130,8 @@ defmodule PainlessWeb.TenancyLiveTest do
 
       assert html =~ "Show Tenancy"
       assert html =~ tenancy.name
+      assert html =~ ~s(href="#tenancy-notes")
+      assert html =~ "Notes"
     end
 
     test "updates tenancy within modal", %{conn: conn, tenancy: tenancy} do
@@ -144,7 +158,7 @@ defmodule PainlessWeb.TenancyLiveTest do
     end
 
     test "displays tenancy notes with author and date", %{conn: conn, tenancy: tenancy} do
-      author = user_fixture()
+      author = user_fixture(%{email: "kenneth.long@example.com"})
 
       tenancy_note_fixture(%{
         tenancy: tenancy,
@@ -157,8 +171,9 @@ defmodule PainlessWeb.TenancyLiveTest do
 
       assert html =~ "Tenancy notes"
       assert html =~ "renewal amount for his lease"
-      assert html =~ author.email
-      assert html =~ "31 August 2026 15:00"
+      assert html =~ "kenneth.lo"
+      refute html =~ "kenneth.long@example.com</span>"
+      assert html =~ "08/31/2026"
     end
 
     test "saves a new tenancy note", %{conn: conn, tenancy: tenancy, user: user} do
@@ -180,7 +195,7 @@ defmodule PainlessWeb.TenancyLiveTest do
       html = render(show_live)
       assert html =~ "Note created successfully"
       assert html =~ "called about renewal amount"
-      assert html =~ user.email
+      assert html =~ String.slice(user.email, 0, 10)
     end
 
     test "saves a tenancy note for a prior day", %{conn: conn, tenancy: tenancy} do
@@ -200,7 +215,7 @@ defmodule PainlessWeb.TenancyLiveTest do
       html = render(show_live)
       assert html =~ "Note created successfully"
       assert html =~ "renewal amount for his lease"
-      assert html =~ "31 August 2026 15:00"
+      assert html =~ "08/31/2026"
     end
 
     test "updates a note created by another user", %{conn: conn, tenancy: tenancy} do
@@ -221,7 +236,7 @@ defmodule PainlessWeb.TenancyLiveTest do
       html = render(show_live)
       assert html =~ "Note updated successfully"
       assert html =~ "updated by another user"
-      assert html =~ author.email
+      assert html =~ String.slice(author.email, 0, 10)
       refute html =~ "original body"
     end
 

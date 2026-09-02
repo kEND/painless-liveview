@@ -34,6 +34,12 @@
     </.link>
   </:action>
   <:action :let={{_id, tenancy}}>
+    <.link navigate={~p"/tenancies/#{tenancy}/notes/new"} title="Add note">
+      <.icon name="hero-chat-bubble-left-ellipsis" />
+      <span class="sr-only">Add note</span>
+    </.link>
+  </:action>
+  <:action :let={{_id, tenancy}}>
     <div class="sr-only">
       <.link navigate={~p"/tenancies/#{tenancy}"}>Show</.link>
     </div>

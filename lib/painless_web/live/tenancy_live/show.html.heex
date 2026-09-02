@@ -2,6 +2,9 @@
   Tenancy <%= @tenancy.id %>
   <:subtitle>This is a tenancy record from your database.</:subtitle>
   <:actions>
+    <.link href="#tenancy-notes" class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
+      Notes
+    </.link>
     <.link patch={~p"/tenancies/#{@tenancy}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit tenancy</.button>
     </.link>
@@ -20,7 +23,7 @@
   <:item title="Rent day of month"><%= @tenancy.rent_day_of_month %></:item>
 </.list>
 
-<section class="mt-14">
+<section id="tenancy-notes" class="mt-14">
   <.header>
     Tenancy notes
     <:subtitle>Dated notes from anyone on this tenancy.</:subtitle>
@@ -36,16 +39,26 @@
       <%= format_note_date(note.noted_at) %>
       <span :if={note_edited?(note)} class="text-zinc-500"> (edited)</span>
     </:col>
-    <:col :let={{_id, note}} label="Author"><%= note.user.email %></:col>
+    <:col :let={{_id, note}} label="Author">
+      <span title={note.user.email}><%= format_note_author(note.user) %></span>
+    </:col>
     <:col :let={{_id, note}} label="Note">
       <span class="whitespace-pre-wrap"><%= note.body %></span>
     </:col>
     <:action :let={{_id, note}}>
-      <.link patch={~p"/tenancies/#{@tenancy}/notes/#{note}/edit"}>Edit</.link>
+      <.link patch={~p"/tenancies/#{@tenancy}/notes/#{note}/edit"} title="Edit">
+        <.icon name="hero-pencil-square" />
+        <span class="sr-only">Edit</span>
+      </.link>
     </:action>
     <:action :let={{id, note}}>
-      <.link phx-click={JS.push("delete_note", value: %{id: note.id}) |> hide("##{id}")} data-confirm="Are you sure?">
-        Delete
+      <.link
+        phx-click={JS.push("delete_note", value: %{id: note.id}) |> hide("##{id}")}
+        data-confirm="Are you sure?"
+        title="Delete"
+      >
+        <.icon name="hero-trash" />
+        <span class="sr-only">Delete</span>
       </.link>
     </:action>
   </.table>

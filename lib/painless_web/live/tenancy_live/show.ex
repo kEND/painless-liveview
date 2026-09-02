@@ -60,8 +60,11 @@ defmodule PainlessWeb.TenancyLive.Show do
   end
 
   defp format_note_date(%NaiveDateTime{} = datetime) do
-    date = NaiveDateTime.to_date(datetime)
-    "#{date.day} #{Calendar.strftime(datetime, "%B %Y %H:%M")}"
+    Calendar.strftime(datetime, "%m/%d/%Y")
+  end
+
+  defp format_note_author(%{email: email}) when is_binary(email) do
+    String.slice(email, 0, 10)
   end
 
   defp note_edited?(%{inserted_at: inserted_at, updated_at: updated_at}) do
