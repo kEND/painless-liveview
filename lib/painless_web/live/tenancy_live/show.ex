@@ -32,7 +32,7 @@ defmodule PainlessWeb.TenancyLive.Show do
     socket
     |> assign(:page_title, "New Note")
     |> assign(:tenancy, LeasingAgent.get_tenancy!(id))
-    |> assign(:note, %TenancyNote{})
+    |> assign(:note, %TenancyNote{noted_at: TenancyNote.now()})
   end
 
   defp apply_action(socket, :edit_note, %{"id" => id, "note_id" => note_id}) do
@@ -46,12 +46,9 @@ defmodule PainlessWeb.TenancyLive.Show do
   end
 
   @impl true
-  def handle_info({PainlessWeb.TenancyLive.NoteFormComponent, {:saved, :new, note}}, socket) do
-    {:noreply, stream_insert(socket, :tenancy_notes, note, at: 0)}
-  end
-
-  def handle_info({PainlessWeb.TenancyLive.NoteFormComponent, {:saved, :edit, note}}, socket) do
-    {:noreply, stream_insert(socket, :tenancy_notes, note)}
+  def handle_info({PainlessWeb.TenancyLive.NoteFormComponent, {:saved, _action, _note}}, socket) do
+    notes = LeasingAgent.list_tenancy_notes(socket.assigns.tenancy.id)
+    {:noreply, stream(socket, :tenancy_notes, notes, reset: true)}
   end
 
   @impl true
@@ -64,7 +61,7 @@ defmodule PainlessWeb.TenancyLive.Show do
 
   defp format_note_date(%NaiveDateTime{} = datetime) do
     date = NaiveDateTime.to_date(datetime)
-    "#{date.day} #{Calendar.strftime(date, "%B %Y")}"
+    "#{date.day} #{Calendar.strftime(datetime, "%B %Y %H:%M")}"
   end
 
   defp note_edited?(%{inserted_at: inserted_at, updated_at: updated_at}) do

@@ -136,8 +136,22 @@ defmodule Painless.LeasingAgentTest do
       other_tenancy = tenancy_fixture()
       user = user_fixture()
 
-      older = tenancy_note_fixture(%{tenancy: tenancy, user: user, body: "older note"})
-      newer = tenancy_note_fixture(%{tenancy: tenancy, user: user, body: "newer note"})
+      newer =
+        tenancy_note_fixture(%{
+          tenancy: tenancy,
+          user: user,
+          body: "newer note",
+          noted_at: ~N[2026-08-31 10:00:00]
+        })
+
+      older =
+        tenancy_note_fixture(%{
+          tenancy: tenancy,
+          user: user,
+          body: "older note",
+          noted_at: ~N[2026-08-01 10:00:00]
+        })
+
       _other = tenancy_note_fixture(%{tenancy: other_tenancy, user: user, body: "other tenancy"})
 
       assert Enum.map(LeasingAgent.list_tenancy_notes(tenancy.id), & &1.id) == [newer.id, older.id]
@@ -173,7 +187,21 @@ defmodule Painless.LeasingAgentTest do
       assert note.tenancy_id == tenancy.id
       assert note.user_id == user.id
       assert note.user.id == user.id
-      assert %NaiveDateTime{} = note.inserted_at
+      assert %NaiveDateTime{} = note.noted_at
+    end
+
+    test "create_tenancy_note/3 accepts a noted_at in the past" do
+      tenancy = tenancy_fixture()
+      user = user_fixture()
+      noted_at = ~N[2026-08-31 15:00:00]
+
+      assert {:ok, %TenancyNote{} = note} =
+               LeasingAgent.create_tenancy_note(tenancy, user, %{
+                 body: "renewal amount for the lease",
+                 noted_at: noted_at
+               })
+
+      assert note.noted_at == noted_at
     end
 
     test "create_tenancy_note/3 with invalid data returns error changeset" do
@@ -187,8 +215,14 @@ defmodule Painless.LeasingAgentTest do
       author = user_fixture()
       note = tenancy_note_fixture(%{user: author, body: "original"})
 
-      assert {:ok, %TenancyNote{} = updated} = LeasingAgent.update_tenancy_note(note, %{body: "updated body"})
+      assert {:ok, %TenancyNote{} = updated} =
+               LeasingAgent.update_tenancy_note(note, %{
+                 body: "updated body",
+                 noted_at: ~N[2026-08-30 09:00:00]
+               })
+
       assert updated.body == "updated body"
+      assert updated.noted_at == ~N[2026-08-30 09:00:00]
       assert updated.user_id == author.id
     end
 

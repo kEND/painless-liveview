@@ -33,7 +33,7 @@
 
   <.table id="tenancy_notes" rows={@streams.tenancy_notes}>
     <:col :let={{_id, note}} label="Date">
-      <%= format_note_date(note.inserted_at) %>
+      <%= format_note_date(note.noted_at) %>
       <span :if={note_edited?(note)} class="text-zinc-500"> (edited)</span>
     </:col>
     <:col :let={{_id, note}} label="Author"><%= note.user.email %></:col>

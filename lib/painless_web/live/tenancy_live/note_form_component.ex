@@ -13,6 +13,7 @@ defmodule PainlessWeb.TenancyLive.NoteFormComponent do
       </.header>
 
       <.simple_form for={@form} id="tenancy-note-form" phx-target={@myself} phx-change="validate" phx-submit="save">
+        <.input field={@form[:noted_at]} type="datetime-local" label="Date and time" />
         <.input field={@form[:body]} type="textarea" label="Note" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Note</.button>

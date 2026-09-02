@@ -145,14 +145,20 @@ defmodule PainlessWeb.TenancyLiveTest do
 
     test "displays tenancy notes with author and date", %{conn: conn, tenancy: tenancy} do
       author = user_fixture()
-      note = tenancy_note_fixture(%{tenancy: tenancy, user: author, body: "renewal amount for his lease"})
+
+      tenancy_note_fixture(%{
+        tenancy: tenancy,
+        user: author,
+        body: "renewal amount for his lease",
+        noted_at: ~N[2026-08-31 15:00:00]
+      })
 
       {:ok, _show_live, html} = live(conn, ~p"/tenancies/#{tenancy}")
 
       assert html =~ "Tenancy notes"
       assert html =~ "renewal amount for his lease"
       assert html =~ author.email
-      assert html =~ Calendar.strftime(note.inserted_at, "%B %Y")
+      assert html =~ "31 August 2026 15:00"
     end
 
     test "saves a new tenancy note", %{conn: conn, tenancy: tenancy, user: user} do
@@ -175,6 +181,26 @@ defmodule PainlessWeb.TenancyLiveTest do
       assert html =~ "Note created successfully"
       assert html =~ "called about renewal amount"
       assert html =~ user.email
+    end
+
+    test "saves a tenancy note for a prior day", %{conn: conn, tenancy: tenancy} do
+      {:ok, show_live, html} = live(conn, ~p"/tenancies/#{tenancy}/notes/new")
+
+      assert html =~ "Date and time"
+      assert html =~ ~s(type="datetime-local")
+
+      assert show_live
+             |> form("#tenancy-note-form",
+               tenancy_note: %{body: "renewal amount for his lease", noted_at: "2026-08-31T15:00"}
+             )
+             |> render_submit()
+
+      assert_patch(show_live, ~p"/tenancies/#{tenancy}")
+
+      html = render(show_live)
+      assert html =~ "Note created successfully"
+      assert html =~ "renewal amount for his lease"
+      assert html =~ "31 August 2026 15:00"
     end
 
     test "updates a note created by another user", %{conn: conn, tenancy: tenancy} do

@@ -126,7 +126,7 @@ defmodule Painless.LeasingAgent do
   def list_tenancy_notes(tenancy_id) do
     TenancyNote
     |> where([n], n.tenancy_id == ^tenancy_id)
-    |> order_by([n], desc: n.inserted_at, desc: n.id)
+    |> order_by([n], desc: n.noted_at, desc: n.id)
     |> preload(:user)
     |> Repo.all()
   end
@@ -160,7 +160,7 @@ defmodule Painless.LeasingAgent do
   end
 
   @doc """
-  Updates a tenancy note body. Authorship is unchanged.
+  Updates a tenancy note. Authorship is unchanged.
   """
   def update_tenancy_note(%TenancyNote{} = tenancy_note, attrs) do
     tenancy_note
