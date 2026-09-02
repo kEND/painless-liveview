@@ -124,4 +124,89 @@ defmodule Painless.LeasingAgentTest do
       assert %Ecto.Changeset{} = LeasingAgent.change_tenancy(tenancy)
     end
   end
+
+  describe "tenancy_notes" do
+    alias Painless.LeasingAgent.TenancyNote
+
+    import Painless.AccountsFixtures
+    import Painless.LeasingAgentFixtures
+
+    test "list_tenancy_notes/1 returns notes for the tenancy newest first" do
+      tenancy = tenancy_fixture()
+      other_tenancy = tenancy_fixture()
+      user = user_fixture()
+
+      older = tenancy_note_fixture(%{tenancy: tenancy, user: user, body: "older note"})
+      newer = tenancy_note_fixture(%{tenancy: tenancy, user: user, body: "newer note"})
+      _other = tenancy_note_fixture(%{tenancy: other_tenancy, user: user, body: "other tenancy"})
+
+      assert Enum.map(LeasingAgent.list_tenancy_notes(tenancy.id), & &1.id) == [newer.id, older.id]
+    end
+
+    test "get_tenancy_note!/1 returns the note with user preloaded" do
+      user = user_fixture()
+      note = tenancy_note_fixture(%{user: user})
+      fetched = LeasingAgent.get_tenancy_note!(note.id)
+
+      assert fetched.id == note.id
+      assert fetched.body == note.body
+      assert fetched.user.id == user.id
+    end
+
+    test "get_tenancy_note!/2 raises when the note belongs to another tenancy" do
+      note = tenancy_note_fixture()
+      other_tenancy = tenancy_fixture()
+
+      assert_raise Ecto.NoResultsError, fn ->
+        LeasingAgent.get_tenancy_note!(other_tenancy.id, note.id)
+      end
+    end
+
+    test "create_tenancy_note/3 with valid data creates a note for the user" do
+      tenancy = tenancy_fixture()
+      user = user_fixture()
+
+      assert {:ok, %TenancyNote{} = note} =
+               LeasingAgent.create_tenancy_note(tenancy, user, %{body: "renewal amount for the lease"})
+
+      assert note.body == "renewal amount for the lease"
+      assert note.tenancy_id == tenancy.id
+      assert note.user_id == user.id
+      assert note.user.id == user.id
+      assert %NaiveDateTime{} = note.inserted_at
+    end
+
+    test "create_tenancy_note/3 with invalid data returns error changeset" do
+      tenancy = tenancy_fixture()
+      user = user_fixture()
+
+      assert {:error, %Ecto.Changeset{}} = LeasingAgent.create_tenancy_note(tenancy, user, %{body: nil})
+    end
+
+    test "update_tenancy_note/2 updates the body and keeps the original author" do
+      author = user_fixture()
+      note = tenancy_note_fixture(%{user: author, body: "original"})
+
+      assert {:ok, %TenancyNote{} = updated} = LeasingAgent.update_tenancy_note(note, %{body: "updated body"})
+      assert updated.body == "updated body"
+      assert updated.user_id == author.id
+    end
+
+    test "update_tenancy_note/2 with invalid data returns error changeset" do
+      note = tenancy_note_fixture()
+      assert {:error, %Ecto.Changeset{}} = LeasingAgent.update_tenancy_note(note, %{body: nil})
+      assert LeasingAgent.get_tenancy_note!(note.id).body == note.body
+    end
+
+    test "delete_tenancy_note/1 deletes the note" do
+      note = tenancy_note_fixture()
+      assert {:ok, %TenancyNote{}} = LeasingAgent.delete_tenancy_note(note)
+      assert_raise Ecto.NoResultsError, fn -> LeasingAgent.get_tenancy_note!(note.id) end
+    end
+
+    test "change_tenancy_note/1 returns a tenancy note changeset" do
+      note = tenancy_note_fixture()
+      assert %Ecto.Changeset{} = LeasingAgent.change_tenancy_note(note)
+    end
+  end
 end

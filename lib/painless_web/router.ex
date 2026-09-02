@@ -75,6 +75,8 @@ defmodule PainlessWeb.Router do
 
         live "/:id", TenancyLive.Show, :show
         live "/:id/show/edit", TenancyLive.Show, :edit
+        live "/:id/notes/new", TenancyLive.Show, :new_note
+        live "/:id/notes/:note_id/edit", TenancyLive.Show, :edit_note
 
         scope "/:tenancy_id" do
           live "/entries", EntryLive.Index, :index

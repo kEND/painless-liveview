@@ -17,6 +17,7 @@ defmodule Painless.LeasingAgent.Tenancy do
     timestamps()
 
     has_many :entries, Painless.Bookkeeper.Entry
+    has_many :tenancy_notes, Painless.LeasingAgent.TenancyNote
   end
 
   @fields [

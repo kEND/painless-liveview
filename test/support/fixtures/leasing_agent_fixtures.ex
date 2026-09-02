@@ -25,4 +25,17 @@ defmodule Painless.LeasingAgentFixtures do
 
     tenancy
   end
+
+  @doc """
+  Generate a tenancy note.
+  """
+  def tenancy_note_fixture(attrs \\ %{}) do
+    {tenancy, attrs} = Map.pop_lazy(attrs, :tenancy, fn -> tenancy_fixture() end)
+    {user, attrs} = Map.pop_lazy(attrs, :user, fn -> Painless.AccountsFixtures.user_fixture() end)
+
+    attrs = Enum.into(attrs, %{body: "some note body"})
+
+    {:ok, tenancy_note} = Painless.LeasingAgent.create_tenancy_note(tenancy, user, attrs)
+    tenancy_note
+  end
 end

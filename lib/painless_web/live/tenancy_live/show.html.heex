@@ -20,6 +20,37 @@
   <:item title="Rent day of month"><%= @tenancy.rent_day_of_month %></:item>
 </.list>
 
+<section class="mt-14">
+  <.header>
+    Tenancy notes
+    <:subtitle>Dated notes from anyone on this tenancy.</:subtitle>
+    <:actions>
+      <.link patch={~p"/tenancies/#{@tenancy}/notes/new"}>
+        <.button>Add note</.button>
+      </.link>
+    </:actions>
+  </.header>
+
+  <.table id="tenancy_notes" rows={@streams.tenancy_notes}>
+    <:col :let={{_id, note}} label="Date">
+      <%= format_note_date(note.inserted_at) %>
+      <span :if={note_edited?(note)} class="text-zinc-500"> (edited)</span>
+    </:col>
+    <:col :let={{_id, note}} label="Author"><%= note.user.email %></:col>
+    <:col :let={{_id, note}} label="Note">
+      <span class="whitespace-pre-wrap"><%= note.body %></span>
+    </:col>
+    <:action :let={{_id, note}}>
+      <.link patch={~p"/tenancies/#{@tenancy}/notes/#{note}/edit"}>Edit</.link>
+    </:action>
+    <:action :let={{id, note}}>
+      <.link phx-click={JS.push("delete_note", value: %{id: note.id}) |> hide("##{id}")} data-confirm="Are you sure?">
+        Delete
+      </.link>
+    </:action>
+  </.table>
+</section>
+
 <.back navigate={~p"/tenancies"}>Back to tenancies</.back>
 
 <.modal :if={@live_action == :edit} id="tenancy-modal" show on_cancel={JS.patch(~p"/tenancies/#{@tenancy}")}>
@@ -29,6 +60,24 @@
     title={@page_title}
     action={@live_action}
     tenancy={@tenancy}
+    patch={~p"/tenancies/#{@tenancy}"}
+  />
+</.modal>
+
+<.modal
+  :if={@live_action in [:new_note, :edit_note]}
+  id="tenancy-note-modal"
+  show
+  on_cancel={JS.patch(~p"/tenancies/#{@tenancy}")}
+>
+  <.live_component
+    module={PainlessWeb.TenancyLive.NoteFormComponent}
+    id={@note.id || :new}
+    title={@page_title}
+    action={@live_action}
+    note={@note}
+    tenancy={@tenancy}
+    current_user={@current_user}
     patch={~p"/tenancies/#{@tenancy}"}
   />
 </.modal>
