@@ -13,6 +13,7 @@
   <:item title="Description"><%= @entry.description %></:item>
   <:item title="Transaction type"><%= @entry.transaction_type %></:item>
   <:item title="Transaction date"><%= @entry.transaction_date %></:item>
+  <:item title="Created by"><%= created_by_email(@entry) %></:item>
 </.list>
 
 <.back navigate={~p"/tenancies/#{@tenancy}/entries"}>Back to entries</.back>
@@ -30,6 +31,7 @@
     action={@live_action}
     entry={@entry}
     tenancy={@tenancy}
+    current_user={@current_user}
     patch={~p"/tenancies/#{@tenancy}/entries/#{@entry}"}
   />
 </.modal>

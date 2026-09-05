@@ -15,6 +15,10 @@ defmodule PainlessWeb.EntryLive.FormComponent do
       </.header>
 
       <.simple_form for={@form} id="entry-form" phx-target={@myself} phx-change="validate" phx-submit="save">
+        <div :if={email = created_by_email(@entry)}>
+          <.label>Created by</.label>
+          <p class="mt-2 text-sm leading-6 text-zinc-900"><%= email %></p>
+        </div>
         <.input field={@form[:tenancy_id]} type="hidden" value={@tenancy.id} />
         <.input field={@form[:description]} type="text" label="Description" />
         <.input field={@form[:amount]} type="text" label="Amount" />
@@ -68,7 +72,7 @@ defmodule PainlessWeb.EntryLive.FormComponent do
   end
 
   defp save_entry(socket, :new, entry_params) do
-    case Bookkeeper.create_entry(entry_params) do
+    case Bookkeeper.create_entry(socket.assigns.current_user, entry_params) do
       {:ok, entry} ->
         notify_parent({:saved, entry})
 
@@ -85,6 +89,9 @@ defmodule PainlessWeb.EntryLive.FormComponent do
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
   end
+
+  defp created_by_email(%{created_by: %{email: email}}) when is_binary(email), do: email
+  defp created_by_email(_), do: nil
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 end

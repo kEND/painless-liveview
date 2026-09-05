@@ -27,6 +27,9 @@
   <:col :let={{_id, entry}} label="Amount"><%= entry.amount %></:col>
   <:col :let={{_id, entry}} label="--"><%= entry.transaction_type %></:col>
   <:col :let={{_id, entry}} label="Description"><%= entry.description %></:col>
+  <:col :let={{_id, entry}} label="--">
+    <.created_by_slug user={entry.created_by} />
+  </:col>
   <:action :let={{_id, entry}}>
     <div class="sr-only">
       <.link navigate={~p"/tenancies/#{@tenancy}/entries/#{entry}"}>Show</.link>
@@ -53,6 +56,7 @@
     action={@live_action}
     entry={@entry}
     tenancy={@tenancy}
+    current_user={@current_user}
     patch={~p"/tenancies/#{@tenancy}/entries"}
   />
 </.modal>

@@ -1,6 +1,7 @@
 defmodule PainlessWeb.EntryLive.Index do
   use PainlessWeb, :live_view
 
+  alias Painless.Accounts.User
   alias Painless.Bookkeeper
   alias Painless.Bookkeeper.Entry
   alias Painless.LeasingAgent
@@ -62,5 +63,18 @@ defmodule PainlessWeb.EntryLive.Index do
       end
 
     {id, Map.merge(entry, %{transaction_type: transaction_type})}
+  end
+
+  def created_by_slug(assigns) do
+    ~H"""
+    <span
+      :if={@user}
+      class="inline-flex h-8 w-8 items-center justify-center rounded-md bg-zinc-200 font-bold text-zinc-800"
+      title={@user.email}
+      aria-label={@user.email}
+    >
+      <%= User.initials(@user) %>
+    </span>
+    """
   end
 end

@@ -146,6 +146,37 @@ defmodule Painless.Accounts.User do
   end
 
   @doc """
+  Two-character initials from an email local-part.
+
+      iex> initials(%User{email: "ken.barker@gmail.com"})
+      "KB"
+
+  """
+  def initials(%__MODULE__{email: email}) when is_binary(email) do
+    initials(email)
+  end
+
+  def initials(email) when is_binary(email) do
+    local =
+      email
+      |> String.split("@")
+      |> hd()
+
+    parts = String.split(local, ~r/[.\-_]+/, trim: true)
+
+    case parts do
+      [first, second | _] ->
+        (String.first(first) <> String.first(second)) |> String.upcase()
+
+      [single] ->
+        single |> String.slice(0, 2) |> String.upcase()
+
+      _ ->
+        ""
+    end
+  end
+
+  @doc """
   Validates the current password otherwise adds an error to the changeset.
   """
   def validate_current_password(changeset, password) do

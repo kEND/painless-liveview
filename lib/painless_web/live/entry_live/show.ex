@@ -20,4 +20,7 @@ defmodule PainlessWeb.EntryLive.Show do
 
   defp page_title(:show), do: "Show Entry"
   defp page_title(:edit), do: "Edit Entry"
+
+  defp created_by_email(%{created_by: %{email: email}}) when is_binary(email), do: email
+  defp created_by_email(_), do: nil
 end

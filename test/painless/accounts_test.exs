@@ -499,4 +499,20 @@ defmodule Painless.AccountsTest do
       refute inspect(%User{password: "123456"}) =~ "password: \"123456\""
     end
   end
+
+  describe "User.initials/1" do
+    test "uses the first letter of each dotted local-part" do
+      assert User.initials(%User{email: "ken.barker@gmail.com"}) == "KB"
+      assert User.initials("ken.barker@gmail.com") == "KB"
+    end
+
+    test "uses the first two characters of a single local-part" do
+      assert User.initials("user@example.com") == "US"
+    end
+
+    test "splits on dots, underscores, and hyphens" do
+      assert User.initials("gaylord_brooke@example.com") == "GB"
+      assert User.initials("julie-harker@example.com") == "JH"
+    end
+  end
 end

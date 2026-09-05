@@ -11,6 +11,7 @@ defmodule Painless.Bookkeeper.Entry do
     field :transaction_date, :date
 
     belongs_to :tenancy, Painless.LeasingAgent.Tenancy
+    belongs_to :created_by, Painless.Accounts.User
 
     timestamps()
   end

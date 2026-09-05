@@ -1,6 +1,7 @@
 defmodule Painless.Bookkeeper do
   import Ecto.Query, warn: false
 
+  alias Painless.Accounts.User
   alias Painless.Bookkeeper.Entry
   alias Painless.LeasingAgent.Tenancy
   alias Painless.Repo
@@ -18,6 +19,7 @@ defmodule Painless.Bookkeeper do
     Entry
     |> where([e], e.tenancy_id == ^tenancy_id)
     |> order_by([e], desc: e.transaction_date)
+    |> preload(:created_by)
     |> Repo.all()
   end
 
@@ -35,7 +37,11 @@ defmodule Painless.Bookkeeper do
       ** (Ecto.NoResultsError)
 
   """
-  def get_entry!(id), do: Repo.get!(Entry, id)
+  def get_entry!(id) do
+    Entry
+    |> Repo.get!(id)
+    |> Repo.preload(:created_by)
+  end
 
   @doc """
   Creates a entry.
@@ -49,10 +55,12 @@ defmodule Painless.Bookkeeper do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_entry(attrs \\ %{}) do
-    %Entry{}
-    |> Entry.changeset(attrs)
-    |> Repo.insert()
+  def create_entry(%User{} = created_by, attrs) do
+    insert_entry(%Entry{created_by_id: created_by.id}, attrs)
+  end
+
+  def create_entry(attrs \\ %{}) when is_map(attrs) do
+    insert_entry(%Entry{}, attrs)
   end
 
   @doc """
@@ -71,6 +79,7 @@ defmodule Painless.Bookkeeper do
     entry
     |> Entry.changeset(attrs)
     |> Repo.update()
+    |> preload_created_by()
   end
 
   @doc """
@@ -101,6 +110,16 @@ defmodule Painless.Bookkeeper do
   def change_entry(%Entry{} = entry, attrs \\ %{}) do
     Entry.changeset(entry, attrs)
   end
+
+  defp insert_entry(%Entry{} = entry, attrs) do
+    entry
+    |> Entry.changeset(attrs)
+    |> Repo.insert()
+    |> preload_created_by()
+  end
+
+  defp preload_created_by({:ok, entry}), do: {:ok, Repo.preload(entry, :created_by, force: true)}
+  defp preload_created_by(error), do: error
 
   @doc """
   List recurring entries for active tenancies.
